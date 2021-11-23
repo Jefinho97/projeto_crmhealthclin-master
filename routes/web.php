@@ -26,8 +26,6 @@ Route::middleware('auth')->group(function() {
     Route::prefix('orcamentos')->name('orcamentos.')->group( function() {
 
         Route::get('dashboard', [OrcamentoController::class, 'dashboard'])->name('dashboard');
-        //Route::get('/dashboard/{ordem}', [OrcamentoController::class, 'ordem'])->middleware('auth');
-        Route::post('dashboard/{ordem}', [OrcamentoController::class, 'ordem'])->name('ordem');
         Route::get('create', [OrcamentoController::class, 'create'])->name('create');
         Route::post('', [OrcamentoController::class, 'store'])->name('store');
         Route::get('{id}', [OrcamentoController::class, 'show'])->name('show');

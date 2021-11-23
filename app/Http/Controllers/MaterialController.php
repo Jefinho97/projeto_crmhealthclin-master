@@ -11,8 +11,6 @@ use App\Models\Material;
 use App\Models\User;
 
 
-use BaconQrCode\Renderer\Color\Rgb;
-use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Auth;
 use mysqli;
 

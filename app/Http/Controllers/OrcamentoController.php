@@ -185,94 +185,9 @@ class OrcamentoController extends Controller
     }
 
     public function update(Request $request) {
-        $orcamento = Orcamento::findOrFail($request->id);
+        $orcamento = Orcamento::findOrFail($request->id)->update($request->all());
         
-        if($request->has('tipo')){
-            
-            $orcamento->equipes()->detach();
-            $equipes = $request->equipes;
-            $quant = (is_array($equipes) ? count($equipes) : 0);
-            if($quant > 0){
-                $custo_equipe = 0;
-                $venda_equipe = 0;
-                for ($equ=0; $equ < $quant; $equ++) { 
-                    $equipe = Equipe::findOrFail($equipes[$equ]);
-                    if (is_null($equipe) == false){
-                    $q = $request->quant_equ[$equ];
-                    $soma_custo = $equipe->custo * $q;
-                    $soma_venda = $equipe->venda * $q;
-                    $custo_equipe += $soma_custo;
-                    $venda_equipe += $soma_venda;
-
-                    $orcamento->equipes()->attach($equipe->id, ['quant' => $q, 'soma_custo' => $soma_custo, 'soma_venda' => $soma_venda]);
-                    }
-                }
-                $orcamento->update(['custo_equipe' => $custo_equipe, 'venda_equipe' => $venda_equipe]);
-            }
-            $orcamento->update(['medico' => $request->medico, 'preco_medico' => $request->preco_medico]);
-        }
-        
-        $orcamento->diarias()->detach();
-        $orcamento->materials()->detach();
-
-        $materials = $request->materials;
-        $diarias = $request->diarias;
-
-        $quant = (is_array($materials) ? count($materials) : 0);
-        if ($quant > 0){
-        for ($mat=0; $mat < $quant; $mat++) {
-            $material = Material::findOrFail($materials[$mat]);
-            if (is_null($material) == false){
-            $q = $request->quant_mat[$mat];
-            $soma_custo = $material->custo * $q;
-            $soma_venda = $material->venda * $q;
-            switch($material->tipo){
-                case "material":
-                    $orcamento->venda_material += $soma_venda;
-                    $orcamento->custo_material += $soma_custo;
-                    break;
-                case "medicamento":
-                    $orcamento->venda_medicamento += $soma_venda;
-                    $orcamento->custo_medicamento += $soma_custo;
-                    break;
-                case "dieta":
-                    $orcamento->venda_dieta += $soma_venda;
-                    $orcamento->custo_dieta += $soma_custo;
-                    break;
-                case "equipamento":
-                    $orcamento->venda_equipamento += $soma_venda;
-                    $orcamento->custo_equipamento += $soma_custo;
-                    break;  
-            }
-            
-            }
-            $orcamento->materials()->attach($material->id, ['quant' => $q, 'soma_custo' => $soma_custo, 'soma_venda' => $soma_venda]);
-            }
-        }
-
-        $quant = (is_array($diarias) ? count($diarias) : 0);
-        if($quant > 0 ){
-            for ($dia=0; $dia < $quant; $dia++) { 
-                $diaria = Diaria::findOrFail($diarias[$dia]);
-                if (is_null($diaria) == false){
-                $orcamento->venda_diaria += $diaria->venda;
-                $orcamento->custo_diaria += $diaria->custo;
-
-                $orcamento->diarias()->attach($diaria->id);
-                }
-            }
-        }
-        $orcamento->valor_final = ($orcamento->venda_material + $orcamento->venda_medicamento + $orcamento->venda_dieta +
-        $orcamento->venda_equipamento + $orcamento->total_diaria + $orcamento->total_equipe + $orcamento->preco_medico);
-
-        $orcamento->update([
-            'procedimento' => $request->procedimento, 'medico' => $request->medico, 'preco_medico' => $request->preco_medico, 
-            'paciente' => $request->paciente, 'email_pac' => $request->email_pac, 'telefone_1' => $request->telefone_1, 
-            'telefone_2' => $request->telefone_2, 'data' => $request->data, 'convenios' => $request->convenios,
-            'termos_condicoes' => $request->termos_condicoes, 'condicoes_pag' => $request->condicoes_pag, 'valor_final' => $orcamento->valor_final,
-        ]);
-
-        return response()->json(['msg'=>'Orçamento foi editado com sucesso!']);
+            return response()->json(['msg'=>'Orçamento foi editado com sucesso!']);
     }
 
     // Detalhar Orçamento

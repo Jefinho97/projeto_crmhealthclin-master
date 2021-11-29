@@ -185,9 +185,150 @@ class OrcamentoController extends Controller
     }
 
     public function update(Request $request) {
-        $orcamento = Orcamento::findOrFail($request->id)->update($request->all());
+        $orcamento = Orcamento::findOrFail($request->id);
+        $x = new Orcamento;
+        // update tipo, medico, equipe
+        if($request->tipo == true){
+            $equipes = $request->equipes;
+            $quant = (is_array($equipes) ? count($equipes) : 0);
+            if($quant > 0){
+                for ($equ=0; $equ < $quant; $equ++) {
+                    $equipe = Equipe::findOrFail($equipes[$equ]);
+                    $pivot = $orcamento->equipes()->where('equipe_id', $equipe->id)->get();
+                    if (is_null($pivot)){
+                        if (is_null($equipe) == false){
+                            $q = $request->quant_equ[$equ];
+                            $soma_custo = $equipe->custo * $q;
+                            $soma_venda = $equipe->venda * $q;
+                            $x->custo_equipe += $soma_custo;
+                            $x->venda_equipe += $soma_venda;
+                            $orcamento->equipes()->attach($equipe->id, ['quant' => $q, 'soma_custo' => $soma_custo, 'soma_venda' => $soma_venda]);
+                        }
+                    } else {
+                        $q = $request->quant_equ[$equ];
+                        $soma_custo = $equipe->custo * $q;
+                        $soma_venda = $equipe->venda * $q;
+                        $x->custo_equipe += $soma_custo;
+                        $x->venda_equipe += $soma_venda;
+                    
+                        $pivot->updateExistingPivot($equipe->id, ['quant' => $q, 'soma_custo' => $soma_custo, 'soma_venda' => $soma_venda]);
+                    }
+                }
+                $orcamento->update(['medico' => $request->medico, 'preco_medico' => $request->preco_medico, 'custo_equipe' => $x->custo_equipe, 'venda_equipe' => $x->venda_equipe]);
+            } else {
+                $orcamento->equipes()->detach();
+                $orcamento->update(['medico' => $request->medico, 'preco_medico' => $request->preco_medico, 'custo_equipe' => null, 'venda_equipe' => null]);
+            }
+        } else {
+            if($orcamento->tipo == true){
+                $orcamento->equipes()->detach();
+                $orcamento->update(['medico' => null, 'preco_medico' => null, 'custo_equipe' => null, 'venda_equipe' => null]);
+            }
+        }
+
+        // update material
+        $materials = $request->materials;
+        $quant = (is_array($materials) ? count($materials) : 0);
+
+        if($quant > 0){
+            for ($mat=0; $mat < $quant; $mat++) {
+                $material = Equipe::findOrFail($materials[$mat]);
+                $pivot = $orcamento->materials()->where('material_id', $material->id)->get();
+                if (is_null($pivot)){
+                    if (is_null($material) == false){
+                        $q = $request->quant_mat[$equ];
+                        $soma_custo = $material->custo * $q;
+                        $soma_venda = $material->venda * $q;
+                        switch($material->tipo){
+                            case "material":
+                                $x->venda_material += $soma_venda;
+                                $x->custo_material += $soma_custo;
+                                break;
+                            case "medicamento":
+                                $x->venda_medicamento += $soma_venda;
+                                $x->custo_medicamento += $soma_custo;
+                                break;
+                            case "dieta":
+                                $x->venda_dieta += $soma_venda;
+                                $x->custo_dieta += $soma_custo;
+                                break;
+                            case "equipamento":
+                                $x->venda_equipamento += $soma_venda;
+                                $x->custo_equipamento += $soma_custo;
+                                break;  
+                        }
+                        $orcamento->materials()->attach($equipe->id, ['quant' => $q, 'soma_custo' => $soma_custo, 'soma_venda' => $soma_venda]);
+                    }
+                } else {
+                    $q = $request->quant_equ[$equ];
+                    $soma_custo = $material->custo * $q;
+                    $soma_venda = $material->venda * $q;
+                    switch($material->tipo){
+                        case "material":
+                            $x->venda_material += $soma_venda;
+                            $x->custo_material += $soma_custo;
+                            break;
+                        case "medicamento":
+                            $x->venda_medicamento += $soma_venda;
+                            $x->custo_medicamento += $soma_custo;
+                            break;
+                        case "dieta":
+                            $x->venda_dieta += $soma_venda;
+                            $x->custo_dieta += $soma_custo;
+                            break;
+                        case "equipamento":
+                            $x->venda_equipamento += $soma_venda;
+                            $x->custo_equipamento += $soma_custo;
+                            break;  
+                    }
+                
+                    $pivot->updateExistingPivot($material->id, ['quant' => $q, 'soma_custo' => $soma_custo, 'soma_venda' => $soma_venda]);
+                }
+            }
         
-            return response()->json(['msg'=>'Orçamento foi editado com sucesso!']);
+            $orcamento->update(['venda_material' => $x->venda_material, 'custo_material' => $x->custo_material,
+            'venda_medicamento' => $x->venda_medicamento, 'custo_medicamento' => $x->custo_medicamento,
+            'venda_dieta' => $x->venda_dieta, 'custo_dieta' => $x->custo_dieta,
+            'venda_equipamento' => $x->venda_equipamento, 'custo_equipamento' => $x->custo_equipamento]);
+        } else {
+            $orcamento->materials()->detach();
+            $orcamento->update(['venda_material' => null, 'custo_material' => null, 'venda_medicamento' => null, 'custo_medicamento' => null,
+            'venda_dieta' => null, 'custo_dieta' => null, 'venda_equipamento' => null, 'custo_equipamento' => null]);
+        }
+
+        // update diaria
+        $diarias = $request->diarias;
+        $quant = (is_array($diarias) ? count($diarias) : 0);
+        if($quant > 0){
+            for ($dia=0; $dia < $quant; $dia++) {
+                $diaria = Equipe::findOrFail($materials[$dia]);
+                $pivot = $orcamento->diarias()->where('diaria_id', $diaria->id)->get();
+                if (is_null($pivot)){
+                    if (is_null($diaria) == false){
+                        $x->custo_diaria = $diaria->custo;
+                        $x->venda_diaria = $diaria->venda;
+                        $orcamento->materials()->attach($diaria->id);
+                    }
+                } else {
+                    $x->custo_diaria = $diaria->custo;
+                    $x->venda_diaria = $diaria->venda;
+                }
+            }
+            $orcamento->update(['custo_diaria' => $x->custo_diaria, 'venda_diaria' => $x->venda_diaria]);
+        } else {
+            $orcamento->diarias()->detach();
+            $orcamento->update(['custo_diaria' => null, 'venda_diaria' => null]);
+        }
+        
+        //update resto
+        $orcamento->valor_final = $request->preco_medico + $x->venda_equipe + $x->venda_material + $x->venda_equipamento + $x->venda_medicamento + $x->venda_dieta + $x->venda_diaria;
+        
+        $orcamento->update(['procedimento' => $request->procedimento, 'paciente' => $request->paciente, 
+        'email_pac' => $request->email_pac, 'telefone_1' => $request->telefone_1, 'telefone_2' => $request->telefone_2, 
+        'tipo' => $request->tipo, 'termos_condicoes' => $request->termos_condicoes, 'convenios' => $request->convenios, 
+        'condicoes_pag' => $request->condicoes_pag, 'data' => $request->data, 'valor_final' => $orcamento->valor_final]);
+        
+        return response()->json(['msg'=>'Orçamento foi editado com sucesso!']);
     }
 
     // Detalhar Orçamento

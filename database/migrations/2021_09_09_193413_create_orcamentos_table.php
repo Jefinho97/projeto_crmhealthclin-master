@@ -39,8 +39,7 @@ class CreateOrcamentosTable extends Migration
 
             $table->double('custo_material', 20, 2)->default(0.00);
             $table->double('venda_material', 20, 2)->default(0.00);
-            
-            
+                       
             $table->double('custo_medicamento', 20, 2)->default(0.00);
             $table->double('venda_medicamento', 20, 2)->default(0.00);
 

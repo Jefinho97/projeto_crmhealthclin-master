@@ -73,6 +73,6 @@ class MaterialController extends Controller
 
         Material::findOrFail($request->id)->update($request->all());
 
-        return response()->json(['msg'=>'Material editado com sucesso!']);
+        return redirect()->route('materiais.dashboard')->with('msg', 'Material editado com sucesso!');
     }
 }

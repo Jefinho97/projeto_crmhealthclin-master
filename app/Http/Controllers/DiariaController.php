@@ -72,6 +72,6 @@ class DiariaController extends Controller
 
         Diaria::findOrFail($request->id)->update($request->all());
 
-        return response()->json(['msg'=>'Diaria foi editada com sucesso!']);
+        return redirect()->route('diarias.dashboard')->with('msg', 'Diaria editada com sucesso!');
     }
 }

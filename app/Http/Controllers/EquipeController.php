@@ -70,6 +70,6 @@ class EquipeController extends Controller
 
         Equipe::findOrFail($request->id)->update($request->all());
 
-        return response()->json(['msg'=>'Profissional foi editado com sucesso!']);
+        return redirect()->route('equipes.dashboard')->with('msg', 'Equipe editada com sucesso!');
     }
 }

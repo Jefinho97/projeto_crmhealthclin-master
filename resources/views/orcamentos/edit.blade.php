@@ -6,8 +6,9 @@
 
 <div id="event-create-container" class="col-md-6 offset-md-3">
     <h1>Editar Orçamento</h1>
-    <form action="{{ route('orcamentos.update', [$orcamento->id]) }}" method="POST" id="update" autocomplete="off">
-        
+    <form action="{{ route('orcamentos.update', [$orcamento->id]) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        @method('PUT')
         <div class="form-group">
             <label for="title">Procedimento:</label>
             <input type="text" class="form-control" id="procedimento" name="procedimento" value="{{ $orcamento->procedimento }}">
@@ -112,23 +113,6 @@ $.ajaxSetup({
 });
 
 $(function(){
-    $('#update').on('submit', function(e){
-        e.preventDefault();
-        var form = this;
-        $.ajax({
-            url:$(form).attr('action'),
-            type:'put',
-            data:new FormData(form),
-            processData:false,
-            dataType:'json',
-            contentType:false,
-            success:function(data){
-                    toastr.success(data.msg);
-                    window.location = "http://127.0.0.1:8000/orcamentos/dashboard";
-                    }
-            }
-        );
-    });
     $("#add-mat").click(function() {
         $("#form-mat").before('<label for="title">Materiais e Medicamentos:</label>'
             +                       '<select name="materials[]" id="materials" class="form-control" style="float: left;">' 

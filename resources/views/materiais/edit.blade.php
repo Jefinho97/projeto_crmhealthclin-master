@@ -6,7 +6,9 @@
 
 <div id="event-create-container" class="col-md-6 offset-md-3">
     <h1>Editar Material</h1>
-    <form action="{{ route('materiais.update', [$material->id]) }}" method="POST" id="update" autocomplete="off">
+    <form action="{{ route('materiais.update', [$material->id]) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        @method('PUT')
         <div class="form-group">
         <label for="title">Tipo:</label>
         <select name="tipo" id="tipo" class="form-control"> 
@@ -36,34 +38,4 @@
         <input type="submit" class="btn btn-primary" value="Editar Material">
     </form>
 </div>
-@extends('layouts.scripts')
-<script>
-toastr.options.preventDuplicates = true;
-
-$.ajaxSetup({
-    headers:{
-        'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
-    }
-});
-
-$(function(){
-    $('#update').on('submit', function(e){
-        e.preventDefault();
-        var form = this;
-        $.ajax({
-            url:$(form).attr('action'),
-            type:'put',
-            data:new FormData(form),
-            processData:false,
-            dataType:'json',
-            contentType:false,
-            success:function(data){
-                    toastr.success(data.msg);
-                    window.location = "http://127.0.0.1:8000/materiais/dashboard";
-                    }
-            }
-        );
-    });
-});
-</script>
 @endsection

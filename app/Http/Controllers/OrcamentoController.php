@@ -216,13 +216,19 @@ class OrcamentoController extends Controller
                 }
                 $orcamento->update(['medico' => $request->medico, 'preco_medico' => $request->preco_medico, 'custo_equipe' => $x->custo_equipe, 'venda_equipe' => $x->venda_equipe]);
             } else {
-                $orcamento->equipes()->detach();
-                $orcamento->update(['medico' => $request->medico, 'preco_medico' => $request->preco_medico, 'custo_equipe' => null, 'venda_equipe' => null]);
+                $orcamento->update(['medico' => $request->medico, 'preco_medico' => $request->preco_medico]);
+                if(count($orcamento->equipes) > 0){
+                    $orcamento->equipes()->detach();
+                    $orcamento->update(['custo_equipe' => 0, 'venda_equipe' => 0]);
+                }
             }
         } else {
             if($orcamento->tipo == true){
-                $orcamento->equipes()->detach();
-                $orcamento->update(['medico' => null, 'preco_medico' => null, 'custo_equipe' => null, 'venda_equipe' => null]);
+                $orcamento->update(['medico' => null, 'preco_medico' => 0, 'tipo' => false]);
+                if(count($orcamento->equipes) > 0){
+                    $orcamento->equipes()->detach();
+                    $orcamento->update(['custo_equipe' => 0, 'venda_equipe' => 0]);
+                }
             }
         }
 
@@ -291,9 +297,11 @@ class OrcamentoController extends Controller
             'venda_dieta' => $x->venda_dieta, 'custo_dieta' => $x->custo_dieta,
             'venda_equipamento' => $x->venda_equipamento, 'custo_equipamento' => $x->custo_equipamento]);
         } else {
-            $orcamento->materials()->detach();
-            $orcamento->update(['venda_material' => null, 'custo_material' => null, 'venda_medicamento' => null, 'custo_medicamento' => null,
-            'venda_dieta' => null, 'custo_dieta' => null, 'venda_equipamento' => null, 'custo_equipamento' => null]);
+            if(count($orcamento->materials) > 0){
+                $orcamento->materials()->detach();
+                $orcamento->update(['venda_material' => 0, 'custo_material' => 0, 'venda_medicamento' => 0, 'custo_medicamento' => 0,
+                'venda_dieta' => 0, 'custo_dieta' => 0, 'venda_equipamento' => 0, 'custo_equipamento' => 0]);
+            }
         }
 
         // update diaria
@@ -316,8 +324,10 @@ class OrcamentoController extends Controller
             }
             $orcamento->update(['custo_diaria' => $x->custo_diaria, 'venda_diaria' => $x->venda_diaria]);
         } else {
-            $orcamento->diarias()->detach();
-            $orcamento->update(['custo_diaria' => null, 'venda_diaria' => null]);
+            if(count($orcamento->diarias) > 0){
+                $orcamento->diarias()->detach();
+                $orcamento->update(['custo_diaria' => 0, 'venda_diaria' => 0]);
+            }
         }
         
         //update resto
@@ -325,10 +335,10 @@ class OrcamentoController extends Controller
         
         $orcamento->update(['procedimento' => $request->procedimento, 'paciente' => $request->paciente, 
         'email_pac' => $request->email_pac, 'telefone_1' => $request->telefone_1, 'telefone_2' => $request->telefone_2, 
-        'tipo' => $request->tipo, 'termos_condicoes' => $request->termos_condicoes, 'convenios' => $request->convenios, 
+        'termos_condicoes' => $request->termos_condicoes, 'convenios' => $request->convenios, 
         'condicoes_pag' => $request->condicoes_pag, 'data' => $request->data, 'valor_final' => $orcamento->valor_final]);
         
-        return response()->json(['msg'=>'Orçamento foi editado com sucesso!']);
+        return redirect()->route('orcamentos.dashboard')->with('msg', 'Orçamentos   editado com sucesso!');
     }
 
     // Detalhar Orçamento

@@ -102,7 +102,6 @@
     </form>
 </div>
 
-@extends('layouts.scripts')
 <script>
 toastr.options.preventDuplicates = true;
 

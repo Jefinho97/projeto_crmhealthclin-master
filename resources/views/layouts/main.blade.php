@@ -9,8 +9,7 @@
         <!-- CSS Bootstrap -->
         <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">
         
-        <link rel="stylesheet" href="{{ asset('datatable/css/dataTables.bootstrap.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('datatable/css/dataTables.bootstrap4.min.css') }}">
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
         
         <link rel="stylesheet" href="{{ asset('sweetalert2/sweetalert2.min.css') }}">
         
@@ -19,6 +18,14 @@
         <!-- CSS da aplicação -->
         <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
         
+        <script src="{{ asset('jquery/jquery-3.6.0.min.js') }}"></script>
+        
+        <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+        <script src="{{ asset('bootstrap/js/bootstrap.min.js') }}"></script>
+        <script src="{{ asset('bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+        <script src="{{ asset('sweetalert2/sweetalert2.min.js') }}"></script>
+        <script src="{{ asset('toastr/toastr.min.js') }}"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
     </head>
     <body>
     <header>

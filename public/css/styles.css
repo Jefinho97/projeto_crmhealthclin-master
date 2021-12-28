@@ -77,27 +77,6 @@
     color: #F2A340;
   }
   
-  /* Search Container */
-  #search-container {
-    background-image: url("../img/banner.jpg");
-    background-size: cover;
-    background-position: center;
-    height: 400px;
-    padding: 50px;
-    text-align: center;
-  }
-  
-  #search-container h1 {
-    color: #F2A340;
-    margin-bottom: 30px;
-    font-weight: 900;
-  }
-  
-  #search-container form {
-    width: 50%;
-    margin: 0 auto;
-  }
-  
   /* Events list */
   #events-container {
     padding: 50px;
@@ -230,7 +209,7 @@
   }
   
   .dashboard-events-container th {
-    width: 25%;
+    
     font-size: medium;  
   }
   

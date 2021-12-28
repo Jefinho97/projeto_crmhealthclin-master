@@ -67,7 +67,7 @@
         <button type="submit" class="btn btn-block btn-success">Criar Orcamento</button>
     </form>
 </div>
-@extends('layouts.scripts')
+
 <script>
 toastr.options.preventDuplicates = true;
         

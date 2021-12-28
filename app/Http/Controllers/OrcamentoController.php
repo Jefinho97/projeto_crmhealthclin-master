@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use mysqli;
 use PhpParser\Node\Stmt\Return_;
 use Barryvdh\DomPDF\Facade as PDF;
-
+use Yajra\DataTables\Facades\DataTables as DataTables;
 class OrcamentoController extends Controller
 {
     // Paginas Principais
@@ -33,13 +33,43 @@ class OrcamentoController extends Controller
 
     }    
 
-    public function dashboard() {
-
+    public function dashboard(Request $request) {
         $user = Auth::user();
-        $orcamentos = $user->orcamentos;  
-        $quant = count($orcamentos);
+        $orcamentos = $user->orcamentos;
 
-        return view('orcamentos.dashboard', ['orcamentos' => $orcamentos, 'quant' => $quant]);
+        if ($request->ajax()) {
+            return Datatables::of($orcamentos)
+                    ->addIndexColumn()
+                    ->addColumn('formData', function($row){
+                        $btn = date('d/m/y', strtotime($row->data));
+
+                            return $btn;
+                    })
+                    ->addColumn('formStatus', function($row){
+                        $btn = '<select name="status" id="status" data-id="./status/'. $row->id .'" class="form-control">   <option value="----">----</option><option value="novo" '. ($row->status === "novo"? "selected" :"") .'>Novo</option>  <option value="aguardando" '. ($row->status === "aguardando"? "selected" : "") .'>Aguardando</option> <option value="em andamento" '. ($row->status === "em andamento"? "selected" : "") .'>Em andamento</option> <option value="cancelado" '. ($row->status === "cancelado"? "selected" : "") .'>Cancelado</option> <option value="ganho" '. ($row->status === "ganho"? "selected" : "") .'>Ganho</option> <option value="perdido" '. ($row->status === "perdido"? "selected" : "") .'>Perdido</option> <option value="desistencia" '. ($row->status === "desistencia"? "selected" : "") .'>Desistencia</option>    </select>';
+                        return $btn;
+                    })
+                    ->addColumn('formRazao', function($row){
+                        $btn = '<select name="razao_status" id="razao_status" data-id="./razao_status/'. $row->id .'" class="form-control"> <option value="----">----</option>  <option value="na fila" '. ($row->razao_status === "na fila"? "selected" :"") .'>Na fila para atendimento</option> <option value="aguardando cliente" '. ($row->razao_status === "aguardando cliente"? "selected" : "") .'>Aguardando cliente</option>  <option value="aguardando envio" '. ($row->razao_status === "aguardando envio"? "selected" : "") .'>Aguardando envio do cirurgião</option>  </select>';
+                        return $btn;
+                    })
+                    ->addColumn('action', function($row){
+   
+                           $btn = '<div style="text-align: center;"><a href="./edit/'. $row->id .'" class="btn btn-sm btn-info edit-btn "> Editar </a>';
+   
+                           $btn = $btn.' <button class="btn btn-sm btn-danger" data-id="./'. $row->id .'" id="destroy">Delete</button> </div>';
+    
+                            return $btn;
+                    })
+                    ->rawColumns(['action', 'formData', 'formStatus', 'formRazao'])
+                    ->make(true);
+        }
+      
+        return view('orcamentos.dashboard',compact('orcamentos'));
+        /*$user = Auth::user();
+        $orcamentos = $user->orcamentos;
+
+        return view('orcamentos.dashboard', ['orcamentos' => $orcamentos]);*/
     }
 
     // Criar Orçamento
@@ -391,11 +421,7 @@ class OrcamentoController extends Controller
     public function status(Request $request) {
         Orcamento::findOrFail($request->id)->update([ 'status' => $request->status]);
         
-        if(is_null($request->ordem)){
-            return redirect()->route('orcamentos.dashboard');  
-        } else {
-            return redirect()->route('orcamentos.ordem', ['ordem' => $request->ordem]);
-        }
+        return;
         
     }
 
@@ -403,11 +429,7 @@ class OrcamentoController extends Controller
 
         Orcamento::findOrFail($request->id)->update([ 'razao_status' => $request->razao_status]);
 
-        if(is_null($request->ordem)){
-            return redirect()->route('orcamentos.dashboard');
-        } else {
-            return redirect()->route('orcamentos.ordem', ['ordem' => $request->ordem]);
-        }
+        return;
 
     }
 }

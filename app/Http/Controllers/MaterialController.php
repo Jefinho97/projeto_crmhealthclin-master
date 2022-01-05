@@ -4,42 +4,62 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Models\Orcamento;
-use App\Models\Diaria;
-use App\Models\Equipe;
 use App\Models\Material;
 use App\Models\User;
 
-
+use Yajra\DataTables\Facades\DataTables as DataTables;
 use Illuminate\Support\Facades\Auth;
 use mysqli;
 
 class MaterialController extends Controller
 {
 
-    public function create(){
+    public function dashboard(Request $request) {
+        
+        $user = Auth::user();
+        $materiais = $user->materials;
 
-        return view('materiais.create');
+        if($request->ajax()) {
+            return datatables::of($materiais)
+            ->addIndexColumn()
+            ->addColumn('action', function($row){
+                $btn = '<div style="text-align: center;"><button class="btn btn-sm btn-info" id="edit" data-id="'. route("materiais.edit", ['id' => $row->id]) .'"> Editar </button>';
+   
+                $btn = $btn.' <button class="btn btn-sm btn-danger" data-id="'. route("materiais.destroy", ["id" => $row->id]) .'" id="destroy">Delete</button> </div>';
 
+                return $btn;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+        }
+        return view('materiais.dashboard', compact('materiais'));
+        
     }
 
-    
     public function store(Request $request) {
         
-        $material = new Material;
-
-        $material->tipo = $request->tipo;
-        $material->nome = $request->nome;
-        $material->uni_medida = $request->uni_medida;
-        $material->custo = $request->custo;
-        $material->venda = $request->venda;
-        $material->user_id = Auth::id();
-           
-        $material->save();
+        $material = Material::updateOrCreate([
+            'id' => $request->material_id
+        ], [
+            'tipo' => $request->tipo,
+            'nome' => $request->nome,
+            'uni_medida' => $request->uni_medida,
+            'custo' => $request->custo,
+            'venda' => $request->venda,
+            'user_id' => Auth::id()
+        ]);
  
-            return response()->json(['msg'=>'Material criado com sucesso!']);
+            return;
 
     }
+
+    public function edit($id) {
+
+        $material = Material::findOrFail($id);
+
+        return response()->json($material);
+    
+    }    
 
     public function destroy($id) {
         $material = Material::findOrFail($id);
@@ -50,29 +70,4 @@ class MaterialController extends Controller
         
     }
 
-    public function dashboard() {
-        
-        $user = Auth::user();
-
-        $materiais = $user->materials;
-
-        $quant = count($materiais);
-
-        return view('materiais.dashboard', ['materiais' => $materiais, 'quant' => $quant]);
-        
-    }
-
-    public function edit($id) {
-        $material = Material::findOrFail($id);
-
-        return view('materiais.edit', ['material' => $material]);
-    
-    }
-
-    public function update(Request $request) {
-
-        Material::findOrFail($request->id)->update($request->all());
-
-        return redirect()->route('materiais.dashboard')->with('msg', 'Material editado com sucesso!');
-    }
 }

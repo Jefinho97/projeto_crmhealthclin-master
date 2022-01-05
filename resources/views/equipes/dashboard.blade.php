@@ -6,56 +6,117 @@
 
 
 <div class="col-md-10 offset-md-1 dashboard-title-container">
-<h1>Funções Cadastradas</h1> <a href="{{ route('equipes.create') }}"> cadastrar função</a>
+<h1>Funções Cadastradas</h1>  <button type="button" class="btn btn-success" id="add" style="float:right"> cadastrar função</button>
 </div>
 <div class="col-md-10 offset-md-1 dashboard-events-container">
-    @if( count($equipes) > 0)
-    <table class="table">   
+    <table class="table table-hover data-table">   
         <thead>
             <tr>
                 <th scope="col">Função</th>
                 <th scope="col">Custo</th>
                 <th scope="col">Venda</th>
-                <th scope="col">Ações</th>
+                <th scope="col"style="text-align: center;" >Ações</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($equipes as $equipe)
-                <tr>
-                    <td>{{ $equipe->funcao }}</td>
-                    <td>{{ $equipe->custo }}</td>
-                    <td>{{ $equipe->venda }}</td>
-                    <td>
-                        <a href="{{ route('equipes.edit', [$equipe->id]) }}" class="btn btn-info edit-btn "><ion-icon name="create-outline"></ion-icon> Editar </a> 
-                    </td>
-                    <td>    
-                    <button class="btn btn-sm btn-danger" data-id="{{ route('equipes.destroy', [$equipe->id]) }}" id="destroy">Delete</button>
-                    </td>
-                </tr>
-            @endforeach
         </tbody>
     </table>
-    @else
-    <p>Não há nenhum Profissional cadastrado</p>
-    @endif
 </div>
-@extends('layouts.scripts')
+<div class="modal fade" id="modalEquipe" tabindex="-1" role="dialog" aria-labelledby="addEquipeLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="titulo"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form  id="equipeForm" name="equipeForm">
+                <input type="hidden" id="equipe_id" name="equipe_id">            
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="title">Função:</label>
+                        <input type="text" class="form-control" id="funcao" name="funcao">
+                    </div>
+                    <div class="form-group">
+                        <label for="title">Custo do funcionario:</label>
+                        <input type="number" step=".01" min="0" class="form-control" id="custo" name="custo">
+                    </div>
+                    <div class="form-group">
+                        <label for="title">Preço final:</label>
+                        <input type="number" step=".01" min="0" class="form-control" id="venda" name="venda">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="save">Salvar Diaria</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 <script>
 toastr.options.preventDuplicates = true;
 
-$.ajaxSetup({
-    headers:{
-        'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
-    }
-});
+
 
 $(function(){
+    $.ajaxSetup({
+        headers:{
+            'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+        }
+    });  
+    var table = $('.data-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('equipes.dashboard') }}",
+            columns: [
+                {data: 'funcao', name: 'funcao'},
+                {data: 'custo', name: 'custo'},
+                {data: 'venda', name: 'venda'},
+                {data: 'action', name: 'action', orderable: false, searchable: false},
+            ]
+        });
+
+    $('#add').click( function(){
+        $('#equipe_id').val();
+        $('#titulo').html("Criar nova função");
+        $('#equipeForm').trigger('reset');
+        $('#modalEquipe').modal('show')
+    });
+
+    $(document).on('click', '#edit', function(){
+        var url = $(this).data('id');
         
+        $.get(url, function(data){
+            $('#modalEquipe').modal('show');
+            $('#titulo').html("Atualizar função");
+            $('#equipe_id').val(data.id);
+            $('#funcao').val(data.funcao);
+            $('#custo').val(data.custo);
+            $('#venda').val(data.venda);
+             
+        });
+        
+    });
+    $(document).on('click', '#save', function(){
+        $.ajax({
+            data: $("#equipeForm").serialize(),
+            url: "{{route('equipes.store')}}",
+            type:"POST",
+            success: function(){
+                table.draw();
+                toastr.success('Função criada com sucesso!');
+            },
+            error: function(){
+                toastr.error('Algo deu errado, ERRO!');
+            }
+        });
+    });
     $(document).on('click','#destroy', function(){
         var url = $(this).data('id');
         swal.fire({
-                title:'Excluir Profissional?',
-                html:'Tem certeza que quer <b>deletar</b> o profissional',
+                title:'Excluir Função?',
+                html:'Tem certeza que quer <b>deletar</b> a funçãp',
                 showCancelButton:true,
                 showCloseButton:true,
                 cancelButtonText:'Cancelar',
@@ -70,8 +131,8 @@ $(function(){
                     url, 
                     type: "DELETE",
                     success: function(){
-                        document.location.reload(true);
-                        toastr.success('Profissional foi deletado com sucesso!');
+                        table.draw();
+                        toastr.success('Função foi deletado com sucesso!');
                     },
                     error: function(){
                         toastr.error('Algo deu errado, ERRO!');

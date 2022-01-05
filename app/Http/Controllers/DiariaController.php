@@ -10,7 +10,7 @@ use App\Models\Equipe;
 use App\Models\Material;
 use App\Models\User;
 
-
+use Yajra\DataTables\Facades\DataTables as DataTables;
 use BaconQrCode\Renderer\Color\Rgb;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Auth;
@@ -19,28 +19,51 @@ use mysqli;
 class DiariaController extends Controller
 {
 
-    public function create(){
+    public function dashboard(Request $request) {
+        
+        $user = Auth::user();
+        $diarias = $user->diarias;
 
-        return view('diarias.create');
+        if($request->ajax()) {
+            return datatables::of($diarias)
+            ->addIndexColumn()
+            ->addColumn('action', function($row){
+                $btn = '<div style="text-align: center;"><button class="btn btn-sm btn-info" id="edit" data-id="'. route("diarias.edit", ['id' => $row->id]) .'"> Editar </button>';
+   
+                $btn = $btn.' <button class="btn btn-sm btn-danger" data-id="'. route("diarias.destroy", ["id" => $row->id]) .'" id="destroy">Delete</button> </div>';
 
+                return $btn;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+        }
+        return view('diarias.dashboard', compact('diarias'));
+        
     }
 
-    
     public function store(Request $request) {
         
-        $diarias = new Diaria;
-
-        $diarias->descricao = $request->descricao;
-        $diarias->custo = $request->custo;
-        $diarias->venda = $request->venda;
-        $diarias->user_id = Auth::id();
-           
-        $diarias->save();
+        $diaria = Diaria::updateOrCreate([
+            'id' => $request->diaria_id
+        ], [
+            'descricao' => $request->descricao,
+            'custo' => $request->custo,
+            'venda' => $request->venda,
+            'user_id' => Auth::id()
+        ]);
  
-            return response()->json(['msg'=>'Diaria foi criada com sucesso!']);
+            return;
 
     }
+
+    public function edit($id) {
+
+        $diaria = Diaria::findOrFail($id);
+
+        return response()->json($diaria);
     
+    }    
+
     public function destroy($id) {
         $diaria = Diaria::findOrFail($id);
         $diaria->orcamentos()->detach();
@@ -50,28 +73,4 @@ class DiariaController extends Controller
         
     }
 
-    public function dashboard() {
-        
-        $user = Auth::user();
-
-        $diarias = $user->diarias;
-
-        return view('diarias.dashboard', ['diarias' => $diarias]);
-        
-    }
-
-    public function edit($id) {
-
-        $diaria = Diaria::findOrFail($id);
-
-        return view('diarias.edit', ['diaria' => $diaria]);
-    
-    }
-
-    public function update(Request $request) {
-
-        Diaria::findOrFail($request->id)->update($request->all());
-
-        return redirect()->route('diarias.dashboard')->with('msg', 'Diaria editada com sucesso!');
-    }
 }

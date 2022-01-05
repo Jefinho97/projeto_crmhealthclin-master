@@ -42,26 +42,20 @@ Route::middleware('auth')->group(function() {
     /** Rotas Diarias */
 
     Route::prefix('diarias')->name('diarias.')->group( function(){
-
-        Route::get('create', [DiariaController::class, 'create'])->name('create');
-        Route::post('', [DiariaController::class, 'store'])->name('store');
-        Route::delete('{id}', [DiariaController::class, 'destroy'])->name('destroy');
         Route::get('dashboard', [DiariaController::class, 'dashboard'])->name('dashboard');
-        Route::get('edit/{id}', [DiariaController::class, 'edit'])->name('edit');
-        Route::put('update/{id}', [DiariaController::class, 'update'])->name('update');
-
+        Route::post('', [DiariaController::class, 'store'])->name('store');
+        Route::get('{id}', [DiariaController::class, 'edit'])->name('edit');
+        Route::delete('{id}', [DiariaController::class, 'destroy'])->name('destroy');
     });
 
     /** Rotas Equipes */
 
     Route::prefix('equipes')->name('equipes.')->group( function(){
 
-        Route::get('create', [EquipeController::class, 'create'])->name('create');
+        Route::get('dashboard', [EquipeController::class, 'dashboard'])->name('dashboard');
         Route::post('', [EquipeController::class, 'store'])->name('store');
         Route::delete('{id}', [EquipeController::class, 'destroy'])->name('destroy');
-        Route::get('dashboard', [EquipeController::class, 'dashboard'])->name('dashboard');
-        Route::get('edit/{id}', [EquipeController::class, 'edit'])->name('edit');
-        Route::put('update/{id}', [EquipeController::class, 'update'])->name('update');
+        Route::get('{id}', [EquipeController::class, 'edit'])->name('edit');
 
     });
 
@@ -69,13 +63,11 @@ Route::middleware('auth')->group(function() {
 
     Route::prefix('materiais')->name('materiais.')->group( function(){
 
-        Route::get('create', [MaterialController::class, 'create'])->name('create');
         Route::post('', [MaterialController::class, 'store'])->name('store');
         Route::delete('{id}', [MaterialController::class, 'destroy'])->name('destroy');
         Route::get('dashboard', [MaterialController::class, 'dashboard'])->name('dashboard');
-        Route::get('edit/{id}', [MaterialController::class, 'edit'])->name('edit');
-        Route::put('update/{id}', [MaterialController::class, 'update'])->name('update');
-
+        Route::get('{id}', [MaterialController::class, 'edit'])->name('edit');
+        
     });
 
 });

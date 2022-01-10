@@ -48,7 +48,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" id="save">Salvar Diaria</button>
+                    <button type="button" class="btn btn-primary" id="save">Salvar Diaria</button>
                 </div>
             </form>
         </div>
@@ -74,7 +74,22 @@ $(function(){
                 {data: 'custo', name: 'custo'},
                 {data: 'venda', name: 'venda'},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
-            ]
+            ],
+            "language": {
+                "search": "Buscar:",
+                "lengthMenu": "Mostrar _MENU_ Registros",
+                "zeroRecords": "Nenhum registro encontrado",
+                "emptyTable": "Nenhum Registro",
+                "info": "Mostrando pagina _PAGE_ de _PAGES_",
+                "infoEmpty": "",
+                "processing": "Processando...",
+                "paginate": {
+                    "first":      "Primeiro",
+                    "last":       "Ultimo",
+                    "next":       "Proximo",
+                    "previous":   "Anterior"
+                },
+            }
         });
 
     $('#add').click( function(){
@@ -99,18 +114,42 @@ $(function(){
         
     });
     $(document).on('click', '#save', function(){
-        $.ajax({
-            data: $("#equipeForm").serialize(),
-            url: "{{route('equipes.store')}}",
-            type:"POST",
-            success: function(){
-                table.draw();
-                toastr.success('Função criada com sucesso!');
-            },
-            error: function(){
-                toastr.error('Algo deu errado, ERRO!');
+        var funcao = equipeForm.funcao;
+        var custo = equipeForm.custo;
+        var venda = equipeForm.venda;
+
+        if((funcao.value == "") | (custo.value == "") | (venda.value == "")){
+            if(funcao.value == ""){
+                toastr.error('Função não informada');
+                descricao.focus();
+                return;
             }
-        });
+            if(custo.value == ""){
+                toastr.error('Custo do Funcionario não informada');
+                descricao.focus();
+                return;
+            }
+            if(venda.value == ""){
+                toastr.error('Preço Final não informado');
+                descricao.focus();
+                return;
+            }
+        } else {
+            $.ajax({
+                data: $("#equipeForm").serialize(),
+                url: "{{route('equipes.store')}}",
+                type:"POST",
+                success: function(){
+                    table.draw();
+                    toastr.success('Função criada com sucesso!');
+                    $('#modalEquipe').modal('hide');
+                },
+                error: function(){
+                    toastr.error('Algo deu errado, ERRO!');
+                    $('#modalEquipe').modal('hide');
+                }
+            });
+        }
     });
     $(document).on('click','#destroy', function(){
         var url = $(this).data('id');

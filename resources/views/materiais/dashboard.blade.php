@@ -64,7 +64,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" id="save">Salvar Material</button>
+                    <button type="button" class="btn btn-primary" id="save">Salvar Material</button>
                 </div>
             </form>
         </div>
@@ -90,7 +90,22 @@ $(function(){
                 {data: 'custo', name: 'custo'},
                 {data: 'venda', name: 'venda'},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
-            ]
+            ],
+            "language": {
+                "search": "Buscar:",
+                "lengthMenu": "Mostrar _MENU_ Registros",
+                "zeroRecords": "Nenhum registro encontrado",
+                "emptyTable": "Nenhum Registro",
+                "info": "Mostrando pagina _PAGE_ de _PAGES_",
+                "infoEmpty": "",
+                "processing": "Processando...",
+                "paginate": {
+                    "first":      "Primeiro",
+                    "last":       "Ultimo",
+                    "next":       "Proximo",
+                    "previous":   "Anterior"
+                },
+            }
         });
     $('#add').click( function(){
         $('#material_id').val();
@@ -115,18 +130,54 @@ $(function(){
         
     });
     $(document).on('click', '#save', function(){
-        $.ajax({
-            data: $("#materialForm").serialize(),
-            url: "{{route('materiais.store')}}",
-            type:"POST",
-            success: function(){
-                table.draw();
-                toastr.success('Material cadastrado com sucesso!');
-            },
-            error: function(){
-                toastr.error('Algo deu errado, ERRO!');
+        var tipo = materialForm.tipo;
+        var nome = materialForm.nome;
+        var uni_medida = materialForm.uni_medida;
+        var custo = materialForm.custo;
+        var venda = materialForm.venda;
+
+        if((tipo.value == "") | (nome.value == "") | (uni_medida.value == "") | (custo.value == "") | (venda.value == "")){
+            if(tipo.value == ""){
+                toastr.error('Tipo não informada');
+                descricao.focus();
+                return;
             }
-        });
+            if(nome.value == ""){
+                toastr.error('Nome não informada');
+                descricao.focus();
+                return;
+            }
+            if(uni_medida.value == ""){
+                toastr.error('Unidade de Medida não informada');
+                descricao.focus();
+                return;
+            }
+            if(custo.value == ""){
+                toastr.error('Custo não informada');
+                descricao.focus();
+                return;
+            }
+            if(venda.value == ""){
+                toastr.error('Preço de Venda não informado');
+                descricao.focus();
+                return;
+            }
+        } else {
+            $.ajax({
+                data: $("#materialForm").serialize(),
+                url: "{{route('materiais.store')}}",
+                type:"POST",
+                success: function(){
+                    table.draw();
+                    toastr.success($("#disciplina option:selected").text() + 'Material cadastrado com sucesso!');
+                    $('#modalMaterial').modal('hide');
+                },
+                error: function(){
+                    toastr.error('Algo deu errado, ERRO!');
+                    $('#modalMaterial').modal('hide');
+                }
+            });
+        }
     });
 
     $(document).on('click','#destroy', function(){

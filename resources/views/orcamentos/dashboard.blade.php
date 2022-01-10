@@ -46,7 +46,22 @@
                 {data: 'formStatus', name: 'formStatus'},
                 {data: 'formRazao', name: 'formRazao'},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
-            ]
+            ],
+            "language": {
+                "search": "Buscar:",
+                "lengthMenu": "Mostrar _MENU_ Registros",
+                "zeroRecords": "Nenhum registro encontrado",
+                "emptyTable": "Nenhum Registro",
+                "info": "Mostrando pagina _PAGE_ de _PAGES_",
+                "infoEmpty": "",
+                "processing": "Processando...",
+                "paginate": {
+                    "first":      "Primeiro",
+                    "last":       "Ultimo",
+                    "next":       "Proximo",
+                    "previous":   "Anterior"
+                },
+            }
         });
         $(document).on('change','#status', function(){
             var url = $(this).data('id');

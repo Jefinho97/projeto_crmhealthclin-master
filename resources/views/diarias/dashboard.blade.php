@@ -48,7 +48,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" id="save">Salvar Diaria</button>
+                    <button type="button" class="btn btn-primary" id="save">Salvar Diaria</button>
                 </div>
             </form>
         </div>
@@ -62,6 +62,7 @@ $(function(){
             'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
         }
     }); 
+
     var table = $('.data-table').DataTable({
             processing: true,
             serverSide: true,
@@ -71,7 +72,22 @@ $(function(){
                 {data: 'custo', name: 'custo'},
                 {data: 'venda', name: 'venda'},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
-            ]
+            ],
+            "language": {
+                "search": "Buscar:",
+                "lengthMenu": "Mostrar _MENU_ Registros",
+                "zeroRecords": "Nenhum registro encontrado",
+                "emptyTable": "Nenhum Registro",
+                "info": "Mostrando pagina _PAGE_ de _PAGES_",
+                "infoEmpty": "",
+                "processing": "Processando...",
+                "paginate": {
+                    "first":      "Primeiro",
+                    "last":       "Ultimo",
+                    "next":       "Proximo",
+                    "previous":   "Anterior"
+                },
+            }
         });
     $('#add').click( function(){
         $('#diaria_id').val();
@@ -94,19 +110,44 @@ $(function(){
         
     });
     $(document).on('click', '#save', function(){
-        $.ajax({
-            data: $("#diariaForm").serialize(),
-            url: "{{route('diarias.store')}}",
-            type:"POST",
-            success: function(){
-                table.draw();
-                toastr.success('Diaria criada com sucesso!');
-            },
-            error: function(){
-                toastr.error('Algo deu errado, ERRO!');
+        var descricao = diariaForm.descricao;
+        var custo = diariaForm.custo;
+        var venda = diariaForm.venda;
+
+        if((descricao.value == "") | (custo.value == "") | (venda.value == "")){
+            if(descricao.value == ""){
+                toastr.error('Descrição não informada');
+                descricao.focus();
+                return;
             }
-        });
+            if(custo.value == ""){
+                toastr.error('Custo da Diaria não informada');
+                descricao.focus();
+                return;
+            }
+            if(venda.value == ""){
+                toastr.error('Preço de Venda não informado');
+                descricao.focus();
+                return;
+            }
+        } else {
+            $.ajax({
+                data: $("#diariaForm").serialize(),
+                url: "{{route('diarias.store')}}",
+                type:"POST",
+                success: function(){
+                    table.draw();
+                    toastr.success('Diaria criada com sucesso!');
+                    $('#modalDiaria').modal('hide');
+                },
+                error: function(){
+                    toastr.error('Algo deu errado, ERRO!');
+                    $('#modalDiaria').modal('hide');
+                }
+            });
+        }
     });
+
     $(document).on('click','#destroy', function(){
         var url = $(this).data('id');
         swal.fire({

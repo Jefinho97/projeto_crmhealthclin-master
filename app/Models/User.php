@@ -70,7 +70,16 @@ class User extends Authenticatable
     public function equipes() {
         return $this->hasMany('App\Models\Equipe');
     }
-    public function materials() {
+    public function materiais() {
         return $this->hasMany('App\Models\Material');
     }
+    public function dietas() {
+        return $this->hasMany('App\Models\Dieta');
+    }  
+    public function equipamentos() {
+        return $this->hasMany('App\Models\Equipamento');
+    } 
+    public function medicamentos() {
+        return $this->hasMany('App\Models\Medicamento');
+    } 
 }

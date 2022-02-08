@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateDiariasTable extends Migration
+class CreateDietasTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class CreateDiariasTable extends Migration
      */
     public function up()
     {
-        Schema::create('diarias', function (Blueprint $table) {
+        Schema::create('dietas', function (Blueprint $table) {
             $table->id();
-            $table->string('descricao');
-            $table->double('custo');
-            $table->double('venda');
+            $table->string('nome');
+            $table->string('uni_medida');
+            $table->string('custo');
+            $table->string('venda');
             $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });
@@ -30,6 +31,6 @@ class CreateDiariasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('diarias');
+        Schema::dropIfExists('dietas');
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateDiariasTable extends Migration
+class CreateMedicamentosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,10 @@ class CreateDiariasTable extends Migration
      */
     public function up()
     {
-        Schema::create('diarias', function (Blueprint $table) {
+        Schema::create('medicamentos', function (Blueprint $table) {
             $table->id();
-            $table->string('descricao');
+            $table->string('nome');
+            $table->string('uni_medida');
             $table->double('custo');
             $table->double('venda');
             $table->foreignId('user_id')->constrained();
@@ -30,6 +31,6 @@ class CreateDiariasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('diarias');
+        Schema::dropIfExists('medicamentos');
     }
 }

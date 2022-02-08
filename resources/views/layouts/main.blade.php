@@ -7,20 +7,21 @@
         <title>@yield('title')</title>
 
         <!-- CSS Bootstrap -->
-        <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.11.4/b-2.2.2/datatables.min.css"/>
         
-        <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">
         
         <link rel="stylesheet" href="{{ asset('sweetalert2/sweetalert2.min.css') }}">
         
         <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
         
+ 
         <!-- CSS da aplicação -->
         <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
         
         <script src="{{ asset('jquery/jquery-3.6.0.min.js') }}"></script>
         
-        <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.11.4/b-2.2.2/datatables.min.js"></script>
         <script src="{{ asset('bootstrap/js/bootstrap.min.js') }}"></script>
         <script src="{{ asset('bootstrap/js/bootstrap.bundle.min.js') }}"></script>
         <script src="{{ asset('sweetalert2/sweetalert2.min.js') }}"></script>
@@ -31,13 +32,8 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-light">
           <div class="collapse navbar-collapse" id="navbar">
-            <a href="/" class="navbar-brand">
-              {{--<img src="/img/hdcevents_logo.svg" alt="HDC Events">--}}
-            </a>
+            <a href="/" class="navbar-brand"><img src="" alt=""></a>
             <ul class="navbar-nav">
-              <li class="nav-item">
-                <a href="{{ route('orcamentos.create') }}" class="nav-link">Criar Orçamentos</a>
-              </li>
               <li class="nav-item">
                 <a href="{{ route('orcamentos.dashboard') }}" class="nav-link">Orçamentos</a>
               </li>
@@ -49,6 +45,15 @@
               </li>
               <li class="nav-item">
                 <a href="{{ route('equipes.dashboard') }}" class="nav-link">Profissionais</a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('dietas.dashboard') }}" class="nav-link">Dietas</a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('equipamentos.dashboard') }}" class="nav-link">Equipamentos</a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('medicamentos.dashboard') }}" class="nav-link">Medicamentos</a>
               </li>
               <li class="nav-item">
                 <form action="/logout" method="POST">

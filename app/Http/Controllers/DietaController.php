@@ -4,40 +4,42 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Models\Material;
+use App\Models\Dieta;
 
 use Yajra\DataTables\Facades\DataTables as DataTables;
+use BaconQrCode\Renderer\Color\Rgb;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Auth;
+use mysqli;
 
-class MaterialController extends Controller
+class DietaController extends Controller
 {
-
     public function dashboard(Request $request) {
         
         $user = Auth::user();
-        $materiais = $user->materiais;
+        $dietas = $user->dietas;
 
         if($request->ajax()) {
-            return datatables::of($materiais)
+            return datatables::of($dietas)
             ->addIndexColumn()
             ->addColumn('action', function($row){
-                $btn = '<div style="text-align: center;"><button class="btn btn-sm btn-info" id="edit" data-id="'. route("materiais.edit", ['id' => $row->id]) .'"> Editar </button>';
+                $btn = '<div style="text-align: center;"><button class="btn btn-sm btn-info" id="edit" data-id="'. route("dietas.edit", ["id" => $row->id]) .'"> Editar </button>';
    
-                $btn = $btn.' <button class="btn btn-sm btn-danger" data-id="'. route("materiais.destroy", ["id" => $row->id]) .'" id="destroy">Delete</button> </div>';
+                $btn = $btn.' <button class="btn btn-sm btn-danger" data-id="'. route("dietas.destroy", ["id" => $row->id]) .'" id="destroy">Delete</button> </div>';
 
                 return $btn;
             })
             ->rawColumns(['action'])
             ->make(true);
         }
-        return view('materiais.dashboard', compact('materiais'));
+        return view('dietas.dashboard', compact('dietas'));
         
     }
 
     public function store(Request $request) {
         
-        $material = Material::updateOrCreate([
-            'id' => $request->material_id
+        $dieta = Dieta::updateOrCreate([
+            'id' => $request->dieta_id
         ], [
             'nome' => $request->nome,
             'uni_medida' => $request->uni_medida,
@@ -52,19 +54,18 @@ class MaterialController extends Controller
 
     public function edit($id) {
 
-        $material = Material::findOrFail($id);
+        $dieta = Dieta::findOrFail($id);
 
-        return response()->json($material);
+        return response()->json($dieta);
     
     }    
 
     public function destroy($id) {
-        $material = Material::findOrFail($id);
-        $material->orcamentos()->detach();
-        $material->delete();
+        $dieta = Dieta::findOrFail($id);
+        $dieta->orcamentos()->detach();
+        $dieta->delete();
 
         return;
         
     }
-
 }

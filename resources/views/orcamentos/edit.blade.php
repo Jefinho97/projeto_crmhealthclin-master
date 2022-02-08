@@ -22,50 +22,162 @@
                 <label for="title">Medico:</label>
                 <input type="text" class="form-control" id="medico" name="medico" placeholder="Nome do médico:" value="{{ $orcamento->medico }}">
                 <input type="number" step=".01" min="0" class="form-control" id="preco_medico" name="preco_medico" placeholder="Preço do médico" value="{{ $orcamento->preco_medico }}">
-            <div id="form-prof">
-                @foreach($orcamento->equipes as $orcequ)
-                <label for="title">Profissionais:</label>
-                <select name="equipes[]" id="equipes" class="form-control">
-                    <option >----</option> 
-                    @foreach($equipes as $equipe) 
-                    <option value="{{ $equipe->id }}" {{ $orcequ->id === $equipe->id ? 'selected' : '' }}>{{ $equipe->funcao }}</option> 
-                    @endforeach 
-                </select>
-                <label for="title">Quantidade:</label>
-                <input type="number" class="form-control" name="quant_equ[]" id="quant_equ" value="{{ $orcequ->pivot->quant }}">
-                @endforeach
-                <label for="title">Adicionar Profissionais:</label>
-                <button type="button" id="add-prof"> + </button>
-            </div>
+            <table class="table table-hover" id="data-table-equipe"> 
+                <thead>
+                    <tr>
+                        <th scope="col">Função</th>
+                        <th scope="col">Quantidade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($orcamento->equipes as $orcequ)
+                    <tr>
+                        <td>
+                            <select name="equipes[]" id="equipes" class="form-control">
+                                <option >----</option> 
+                                @foreach($user->equipes as $equipe) 
+                                <option value="{{ $equipe->id }}" {{ $orcequ->id === $equipe->id ? 'selected' : '' }}>{{ $equipe->funcao }}</option> 
+                                @endforeach 
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" class="form-control" name="quant_equ[]" id="quant_equ" value="{{ $orcequ->pivot->quant }}">    
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
 
-        <div class="form-group" id="form-mat">
-            @foreach($orcamento->materials as $orcmat)
-            <label for="title">Materiais e Medicamentos:</label>
-            <select name="materials[]" id="materials" class="form-control" style="float: left;"> 
-                <option value="">----</option>
-                @foreach($materiais as $material)
-                <option value="{{ $material->id }}" {{ $orcmat->id === $material->id? 'selected': ''}}>{{ $material->nome }}</option>
-                @endforeach
-            </select>
-            <input type="number" class="form-control" name="quant_mat[]" id="quant_mat" placeholder="Quantidade" value="{{ $orcmat->pivot->quant }}">
-            @endforeach
-            <label for="title">Adicionar Materiais e Medicamentos:</label>
-            <button type="button" id="add-mat" style="float: right;" > + </button>
+        <div class="form-group">
+            <table class="table table-hover" id="data-table-medicamento"> 
+                <thead>
+                    <tr>
+                        <th scope="col">Medicamentos</th>
+                        <th scope="col">Quantidade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($orcamento->medicamentos as $orcmed)
+                    <tr>
+                        <td>
+                        <select name="madicamentos[]" id="medicamentos" class="form-control"> 
+                            <option value="">----</option>
+                            @foreach($user->medicamentos as $medicamento)
+                            <option value="{{ $medicamento->id }}" {{ $orcmed->id === $medicamento->id? 'selected': ''}}>{{ $medicamento->nome }}</option>
+                            @endforeach
+                        </select>
+                        </td>
+                        <td>
+                            <input type="number" class="form-control" name="quant_med[]" id="quant_med" placeholder="Quantidade" value="{{ $orcmed->pivot->quant }}">
+                        </td>
+                    </tr>
+                    @endforeach 
+                </tbody>           
+        </div>       
+        
+        <div class="form-group">
+            <table class="table table-hover" id="data-table-equipamento"> 
+                <thead>
+                    <tr>
+                        <th scope="col">Equipamentos</th>
+                        <th scope="col">Quantidade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($orcamento->equipamentos as $orcequipa)
+                    <tr>
+                        <td>
+                        <select name="equipamentos[]" id="equipamentos" class="form-control" style="float: left;"> 
+                            <option value="">----</option>
+                            @foreach($user->equipamentos as $equipamento)
+                            <option value="{{ $equipamento->id }}" {{ $orcequipa->id === $equipamento->id? 'selected': ''}}>{{ $equipamento->nome }}</option>
+                            @endforeach
+                        </select>
+                        </td>
+                        <td>
+                            <input type="number" class="form-control" name="quant_equipa[]" id="quant_equipa" placeholder="Quantidade" value="{{ $orcequipa->pivot->quant }}">
+                        </td>
+                    </tr>
+                    @endforeach 
+                </tbody>           
         </div>       
 
-        <div class="form-group" id="form-dia">
-            @foreach($orcamento->diarias as $orcdia)
-            <label for="title">Diarias:</label>
-            <select name="diarias[]" id="diarias" class="form-control">
-                <option value="">----</option> 
-                @foreach($diarias as $diaria) 
-                <option value="{{ $diaria->id }}" {{orcdia->id === $diaria->id? 'selected' : ''}}>{{ $diaria->descricao }}</option> 
-                @endforeach 
-            </select>
-            @endforeach
-            <label for="title">Adicionar Diarias:</label>
-            <button type="button" id="add-dia"> + </button>
+        <div class="form-group">
+            <table class="table table-hover" id="data-table-dieta"> 
+                <thead>
+                    <tr>
+                        <th scope="col">Dietas</th>
+                        <th scope="col">Quantidade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($orcamento->dietas as $orcdie)
+                    <tr>
+                        <td>
+                        <select name="dietas[]" id="dietas" class="form-control"> 
+                            <option value="">----</option>
+                            @foreach($user->dietas as $dieta)
+                            <option value="{{ $dieta->id }}" {{ $orcdie->id === $dieta->id? 'selected': ''}}>{{ $dieta->nome }}</option>
+                            @endforeach
+                        </select>
+                        </td>
+                        <td>
+                            <input type="number" class="form-control" name="quant_die[]" id="quant_die" placeholder="Quantidade" value="{{ $orcdie->pivot->quant }}">
+                        </td>
+                    </tr>
+                    @endforeach 
+                </tbody>           
+        </div>    
+
+        <div class="form-group">
+            <table class="table table-hover" id="data-table-material"> 
+                <thead>
+                    <tr>
+                        <th scope="col">Materiais</th>
+                        <th scope="col">Quantidade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($orcamento->materiais as $orcmat)
+                    <tr>
+                        <td>
+                        <select name="materiais[]" id="materiais" class="form-control"> 
+                            <option value="">----</option>
+                            @foreach($user->materiais as $material)
+                            <option value="{{ $material->id }}" {{ $orcmat->id === $material->id? 'selected': ''}}>{{ $material->nome }}</option>
+                            @endforeach
+                        </select>
+                        </td>
+                        <td>
+                            <input type="number" class="form-control" name="quant_mat[]" id="quant_mat" placeholder="Quantidade" value="{{ $orcmat->pivot->quant }}">
+                        </td>
+                    </tr>
+                    @endforeach 
+                </tbody>           
+        </div>       
+
+        <div class="form-group">
+            <table class="table table-hover" id="data-table-diaria">
+                <thead>
+                    <tr>
+                        <th scope="col">Diarias</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($orcamento->diarias as $orcdia)
+                    <tr>
+                        <td>
+                        <select name="diarias[]" id="diarias" class="form-control">
+                            <option value="">----</option> 
+                            @foreach($user->diarias as $diaria) 
+                            <option value="{{ $diaria->id }}" {{$orcdia->id === $diaria->id? 'selected' : ''}}>{{ $diaria->descricao }}</option> 
+                            @endforeach 
+                        </select>
+                        </td>
+                    </tr>
+                    @endforeach
+            </table>
         </div>
 
         <label for="title">Informações do Paciente {{ $orcamento->paciente}}:</label>
@@ -105,32 +217,137 @@
 <script>
 toastr.options.preventDuplicates = true;
 
-$.ajaxSetup({
-    headers:{
-        'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
-    }
-});
-
-$(function(){
-    $("#add-mat").click(function() {
-        $("#form-mat").before('<label for="title">Materiais e Medicamentos:</label>'
-            +                       '<select name="materials[]" id="materials" class="form-control" style="float: left;">' 
-            +                           '<option value="" selected>----</option>' 
-            +                           '@foreach($materiais as $material)'
-            +                           '<option value="{{ $material->id }}">{{ $material->nome }}</option>'
-            +                           '@endforeach' 
-            +                     '</select>'
-            +                     '<input type="number" class="form-control" name="quant_mat[]" id="quant_mat" placeholder="Quantidade">');
+$(document).ready( function () {
+    $.ajaxSetup({
+        headers:{
+            'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+        }
     });
-    // ADD diarias
-    $("#add-dia").click(function() {
-        $("#form-dia").before('<label for="title">Diarias:</label><select name="diarias[]" id="diarias" class="form-control"><option value="" selected>----</option> @foreach($diarias as $diaria) <option value="{{ $diaria->id }}">{{ $diaria->descricao }}</option> @endforeach </select>');
+    
+    var table_equipe = $('#data-table-equipe').DataTable({
+        dom: 'Bfrtip',
+        buttons: {
+            dom: {
+                button: {
+                className: 'btn btn-success'
+                }
+            },
+            buttons:[{
+                text: 'Adicionar Profissional',
+                action: function (){
+                        table_equipe.row.add([
+                            '<select name="equipes[]" id="equipes" class="form-control"><option selected>----</option> @foreach($equipes as $equipe) <option value="{{ $equipe->id }}">{{ $equipe->funcao }}</option> @endforeach </select>',
+                            '<input type="number" class="form-control" name="quant_equ[]" id="quant_equ">'
+                        ]).draw(false);
+                },
+            }
+            ]
+        }
     });
 
-    // ADD profissionais 
-    $("#add-prof").click(function() {
-        $("#form-prof").before('<label for="title">Profissionais:</label><select name="equipes[]" id="equipes" class="form-control"><option selected>----</option> @foreach($equipes as $equipe) <option value="{{ $equipe->id }}">{{ $equipe->funcao }}</option> @endforeach </select><label for="title">Quantidade:</label><input type="number" class="form-control" name="quant_equ[]" id="quant_equ">');
-    });       
+    var table_medicamento = $('#data-table-medicamento').DataTable({
+        dom: 'Bfrtip',
+        buttons: {
+            dom: {
+                button: {
+                className: 'btn btn-success'
+                }
+            },
+            buttons:[{
+                text: 'Adicionar Medicamento',
+                action: function (){
+                        table_equipe.row.add([
+                            '<select name="medicamentos[]" id="medicamentos" class="form-control"><option selected>----</option> @foreach($medicamentos as $medicamento) <option value="{{ $medicamento->id }}">{{ $medicamento->nome }}</option> @endforeach </select>',
+                            '<input type="number" class="form-control" name="quant_med[]" id="quant_med">'
+                        ]).draw(false);
+                },
+            }
+            ]
+        }
+    });
+
+    var table_equipamento = $('#data-table-equipamento').DataTable({
+        dom: 'Bfrtip',
+        buttons: {
+            dom: {
+                button: {
+                className: 'btn btn-success'
+                }
+            },
+            buttons:[{
+                text: 'Adicionar Equipamento',
+                action: function (){
+                        table_equipamento.row.add([
+                            '<select name="equipamentos[]" id="equipamentos" class="form-control"><option selected>----</option> @foreach($equipamentos as $equipamento) <option value="{{ $equipamento->id }}">{{ $equipamento->nome }}</option> @endforeach </select>',
+                            '<input type="number" class="form-control" name="quant_equipa[]" id="quant_equipa">'
+                        ]).draw(false);
+                },
+            }
+            ]
+        }
+    });
+
+    var table_dieta = $('#data-table-dieta').DataTable({
+        dom: 'Bfrtip',
+        buttons: {
+            dom: {
+                button: {
+                className: 'btn btn-success'
+                }
+            },
+            buttons:[{
+                text: 'Adicionar Dieta',
+                action: function (){
+                        table_dieta.row.add([
+                            '<select name="dietas[]" id="dietas" class="form-control"><option selected>----</option> @foreach($dietas as $dieta) <option value="{{ $dieta->id }}">{{ $dieta->nome }}</option> @endforeach </select>',
+                            '<input type="number" class="form-control" name="quant_die[]" id="quant_die">'
+                        ]).draw(false);
+                },
+            }
+            ]
+        }
+    });
+
+    var table_material = $('#data-table-material').DataTable({
+        dom: 'Bfrtip',
+        buttons: {
+            dom: {
+                button: {
+                className: 'btn btn-success'
+                }
+            },
+            buttons:[{
+                text: 'Adicionar Material',
+                action: function (){
+                        table_material.row.add([
+                            '<select name="materials[]" id="materials" class="form-control"><option value="" selected>----</option>@foreach($materiais as $material)<option value="{{ $material->id }}">{{ $material->nome }}</option> @endforeach </select>',
+                            '<input type="number" class="form-control" name="quant_mat[]" id="quant_mat" placeholder="Quantidade">>'
+                        ]).draw(false);
+                },
+            }
+            ]
+        }
+    });
+
+    var table_diaria = $('#data-table-diaria').DataTable({
+        dom: 'Bfrtip',
+        buttons: {
+            dom: {
+                button: {
+                className: 'btn btn-success'
+                }
+            },
+            buttons:[{
+                text: 'Adicionar Diaria',
+                action: function (){
+                        table_diaria.row.add([
+                            '<select name="diarias[]" id="diarias" class="form-control"><option value="" selected>----</option> @foreach($diarias as $diaria) <option value="{{ $diaria->id }}">{{ $diaria->descricao }}</option> @endforeach </select>'
+                        ]).draw(false);
+                },
+            }
+            ]
+        }
+    });  
         
     $('#show').on('click',function() {
         $("#medprof").toggle(this.checked);

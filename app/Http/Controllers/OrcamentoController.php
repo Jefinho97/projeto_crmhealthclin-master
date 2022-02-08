@@ -6,8 +6,11 @@ use Illuminate\Http\Request;
 
 use App\Models\Orcamento;
 use App\Models\Diaria;
+use App\Models\Dieta;
+use App\Models\Equipamento;
 use App\Models\Equipe;
 use App\Models\Material;
+use App\Models\Medicamento;
 use App\Models\User;
 
 use BaconQrCode\Renderer\Color\Rgb;
@@ -41,7 +44,7 @@ class OrcamentoController extends Controller
             return Datatables::of($orcamentos)
                     ->addIndexColumn()
                     ->addColumn('formData', function($row){
-                        $btn = date('d/m/y', strtotime($row->data));
+                        $btn = date('d/m/y', strtotime($row->created_at));
 
                             return $btn;
                     })
@@ -66,23 +69,10 @@ class OrcamentoController extends Controller
         }
       
         return view('orcamentos.dashboard',compact('orcamentos'));
-        /*$user = Auth::user();
-        $orcamentos = $user->orcamentos;
-
-        return view('orcamentos.dashboard', ['orcamentos' => $orcamentos]);*/
+        
     }
 
     // Criar Orçamento
-
-    public function create(){
-        $materiais = Material::all();
-        $diarias = Diaria::all();
-        $equipes = Equipe::all();
-        
-        return view('orcamentos.create', ['materiais' => $materiais, 'diarias' => $diarias, 'equipes' => $equipes]);
-
-    }
-
     
     public function store(Request $request) {
         
@@ -93,98 +83,11 @@ class OrcamentoController extends Controller
         $orcamento->email_pac = $request->email_pac;
         $orcamento->telefone_1 = $request->telefone_1;
         $orcamento->telefone_2 = $request->telefone_2;
-        $orcamento->termos_condicoes = $request->termos_condicoes;
-        $orcamento->convenios = $request->convenios;
-        $orcamento->condicoes_pag = $request->condicoes_pag;
-        $orcamento->data = $request->data;
-        $orcamento->tipo = $request->has('tipo');  
         
         $orcamento->user_id = Auth::user()->id;
         $orcamento->save();
-        $orcamento = Orcamento::all()->last();
-
-        if($orcamento->tipo == true){
-            $orcamento->medico = $request->medico;
-            $orcamento->preco_medico = $request->preco_medico;
-
-            $equipes = $request->equipes;
-            $quant = (is_array($equipes) ? count($equipes) : 0);
-
-        for ($equ=0; $equ < $quant; $equ++) { 
-            $equipe = Equipe::findOrFail($equipes[$equ]);
-            if (is_null($equipe) == false){
-            $q = $request->quant_equ[$equ];
-            $soma_custo = $equipe->custo * $q;
-            $soma_venda = $equipe->venda * $q;
-            $orcamento->custo_equipe += $soma_custo;
-            $orcamento->venda_equipe += $soma_venda;
-
-            $orcamento->equipes()->attach($equipe->id, ['quant' => $q, 'soma_custo' => $soma_custo, 'soma_venda' => $soma_venda]);
-            }
-        }
-        }
-        $materials = $request->materials;
-        $diarias = $request->diarias;
-
-        $quant = (is_array($materials) ? count($materials) : 0);
-
-        for ($mat=0; $mat < $quant; $mat++) {
-            $material = Material::findOrFail($materials[$mat]);
-            if (is_null($material) == false){
-            $q = $request->quant_mat[$mat];
-            $soma_custo = $material->custo * $q;
-            $soma_venda = $material->venda * $q;
-            switch($material->tipo){
-                case "material":
-                    $orcamento->venda_material += $soma_venda;
-                    $orcamento->custo_material += $soma_custo;
-                    break;
-                case "medicamento":
-                    $orcamento->venda_medicamento += $soma_venda;
-                    $orcamento->custo_medicamento += $soma_custo;
-                    break;
-                case "dieta":
-                    $orcamento->venda_dieta += $soma_venda;
-                    $orcamento->custo_dieta += $soma_custo;
-                    break;
-                case "equipamento":
-                    $orcamento->venda_equipamento += $soma_venda;
-                    $orcamento->custo_equipamento += $soma_custo;
-                    break;  
-            }
-            
-
-            $orcamento->materials()->attach($material->id, ['quant' => $q, 'soma_custo' => $soma_custo, 'soma_venda' => $soma_venda]);
-            }
-        }
-
-        $quant = (is_array($diarias) ? count($diarias) : 0);
-
-        for ($dia=0; $dia < $quant; $dia++) { 
-            $diaria = Diaria::findOrFail($diarias[$dia]);
-            if (is_null($diaria) == false){
-            $orcamento->venda_diaria += $diaria->venda;
-            $orcamento->custo_diaria += $diaria->custo;
-
-            $orcamento->diarias()->attach($diaria->id);
-            }
-        }
-        $orcamento->valor_inicial = $orcamento->venda_material + $orcamento->venda_diaria 
-        + $orcamento->venda_medicamento + $orcamento->venda_dieta + $orcamento->venda_equipamento
-        + $orcamento->preco_medico + $orcamento->venda_equipe;
-
-        $orcamento->update([
-            'custo_material' => $orcamento->custo_material, 'venda_material' => $orcamento->venda_material,
-            'custo_medicamento' => $orcamento->custo_medicamento, 'venda_medicamento' => $orcamento->venda_medicamento, 
-            'custo_dieta' => $orcamento->custo_dieta, 'venda_dieta' => $orcamento->venda_dieta,
-            'custo_equipamento' => $orcamento->custo_equipamento, 'venda_equipamento' => $orcamento->venda_equipamento, 
-            'custo_diaria' => $orcamento->custo_diaria, 'venda_diaria' => $orcamento->venda_diaria,
-            'valor_inicial' => $orcamento->valor_inicial, 'valor_final' => $orcamento->valor_inicial,
-            'medico' => $orcamento->medico, 'preco_medico' => $orcamento->preco_medico,
-            'custo_equipe' => $orcamento->custo_equipe, 'venda_equipe' => $orcamento->venda_equipe 
-        ]);
     
-            return response()->json(['msg'=>'Orçamento foi criado com sucesso!']);
+            return;
         
     }
 
@@ -194,7 +97,10 @@ class OrcamentoController extends Controller
         $orcamento = Orcamento::find($id);
         $orcamento->diarias()->detach();
         $orcamento->equipes()->detach();
-        $orcamento->materials()->detach();
+        $orcamento->materiais()->detach();
+        $orcamento->dietas()->detach();
+        $orcamento->equipamentos()->detach();
+        $orcamento->medicamentos()->detach();
         $orcamento->delete();
 
             return;
@@ -203,14 +109,10 @@ class OrcamentoController extends Controller
     // Editar Orçamento
 
     public function edit($id) {
-
+        $user = User::auth();
         $orcamento = Orcamento::findOrFail($id);
-        $materiais = Material::all();
-        $diarias = Diaria::all();
-        $equipes = Equipe::all();
 
-        return view('orcamentos.edit', ['orcamento' => $orcamento, 'materiais' => $materiais, 'diarias' => $diarias, 
-        'equipes' => $equipes]);
+        return view('orcamentos.edit', ['orcamento' => $orcamento, 'user' => $user]);
     
     }
 
@@ -263,74 +165,39 @@ class OrcamentoController extends Controller
         }
 
         // update material
-        $materials = $request->materials;
-        $quant = (is_array($materials) ? count($materials) : 0);
+        $materiais = $request->materiais;
+        $quant = (is_array($materiais) ? count($materiais) : 0);
 
         if($quant > 0){
             for ($mat=0; $mat < $quant; $mat++) {
-                $material = Equipe::findOrFail($materials[$mat]);
+                $material = Equipe::findOrFail($materiais[$mat]);
                 $pivot = $orcamento->materials()->where('material_id', $material->id)->get();
                 if (is_null($pivot)){
                     if (is_null($material) == false){
                         $q = $request->quant_mat[$equ];
                         $soma_custo = $material->custo * $q;
                         $soma_venda = $material->venda * $q;
-                        switch($material->tipo){
-                            case "material":
-                                $x->venda_material += $soma_venda;
-                                $x->custo_material += $soma_custo;
-                                break;
-                            case "medicamento":
-                                $x->venda_medicamento += $soma_venda;
-                                $x->custo_medicamento += $soma_custo;
-                                break;
-                            case "dieta":
-                                $x->venda_dieta += $soma_venda;
-                                $x->custo_dieta += $soma_custo;
-                                break;
-                            case "equipamento":
-                                $x->venda_equipamento += $soma_venda;
-                                $x->custo_equipamento += $soma_custo;
-                                break;  
-                        }
-                        $orcamento->materials()->attach($equipe->id, ['quant' => $q, 'soma_custo' => $soma_custo, 'soma_venda' => $soma_venda]);
+                        $x->venda_material += $soma_venda;
+                        $x->custo_material += $soma_custo;
+
+                        $orcamento->materiais()->attach($equipe->id, ['quant' => $q, 'soma_custo' => $soma_custo, 'soma_venda' => $soma_venda]);
                     }
                 } else {
                     $q = $request->quant_equ[$equ];
                     $soma_custo = $material->custo * $q;
                     $soma_venda = $material->venda * $q;
-                    switch($material->tipo){
-                        case "material":
-                            $x->venda_material += $soma_venda;
-                            $x->custo_material += $soma_custo;
-                            break;
-                        case "medicamento":
-                            $x->venda_medicamento += $soma_venda;
-                            $x->custo_medicamento += $soma_custo;
-                            break;
-                        case "dieta":
-                            $x->venda_dieta += $soma_venda;
-                            $x->custo_dieta += $soma_custo;
-                            break;
-                        case "equipamento":
-                            $x->venda_equipamento += $soma_venda;
-                            $x->custo_equipamento += $soma_custo;
-                            break;  
-                    }
+                    $x->venda_material += $soma_venda;
+                    $x->custo_material += $soma_custo;
                 
                     $pivot->updateExistingPivot($material->id, ['quant' => $q, 'soma_custo' => $soma_custo, 'soma_venda' => $soma_venda]);
                 }
             }
         
-            $orcamento->update(['venda_material' => $x->venda_material, 'custo_material' => $x->custo_material,
-            'venda_medicamento' => $x->venda_medicamento, 'custo_medicamento' => $x->custo_medicamento,
-            'venda_dieta' => $x->venda_dieta, 'custo_dieta' => $x->custo_dieta,
-            'venda_equipamento' => $x->venda_equipamento, 'custo_equipamento' => $x->custo_equipamento]);
+            $orcamento->update(['venda_material' => $x->venda_material, 'custo_material' => $x->custo_material]);
         } else {
-            if(count($orcamento->materials) > 0){
-                $orcamento->materials()->detach();
-                $orcamento->update(['venda_material' => 0, 'custo_material' => 0, 'venda_medicamento' => 0, 'custo_medicamento' => 0,
-                'venda_dieta' => 0, 'custo_dieta' => 0, 'venda_equipamento' => 0, 'custo_equipamento' => 0]);
+            if(count($orcamento->materiais) > 0){
+                $orcamento->materiais()->detach();
+                $orcamento->update(['venda_material' => 0, 'custo_material' => 0]);
             }
         }
 
@@ -339,7 +206,7 @@ class OrcamentoController extends Controller
         $quant = (is_array($diarias) ? count($diarias) : 0);
         if($quant > 0){
             for ($dia=0; $dia < $quant; $dia++) {
-                $diaria = Equipe::findOrFail($materials[$dia]);
+                $diaria = Equipe::findOrFail($diarias[$dia]);
                 $pivot = $orcamento->diarias()->where('diaria_id', $diaria->id)->get();
                 if (is_null($pivot)){
                     if (is_null($diaria) == false){

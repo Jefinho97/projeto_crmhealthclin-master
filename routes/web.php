@@ -14,8 +14,11 @@ use Illuminate\Support\Facades\Route;
 */
 use App\Http\Controllers\OrcamentoController;
 use App\Http\Controllers\DiariaController;
+use App\Http\Controllers\DietaController;
+use App\Http\Controllers\EquipamentoController;
 use App\Http\Controllers\EquipeController;
 use App\Http\Controllers\MaterialController;
+use App\Http\Controllers\MedicamentoController;
 
 /** Rotas Orçamento */
 
@@ -26,7 +29,6 @@ Route::middleware('auth')->group(function() {
     Route::prefix('orcamentos')->name('orcamentos.')->group( function() {
 
         Route::get('dashboard', [OrcamentoController::class, 'dashboard'])->name('dashboard');
-        Route::get('create', [OrcamentoController::class, 'create'])->name('create');
         Route::post('', [OrcamentoController::class, 'store'])->name('store');
         Route::get('{id}', [OrcamentoController::class, 'show'])->name('show');
         Route::get('{id}/pdf', [OrcamentoController::class, 'gerarpdf'])->name('gerarpdf');
@@ -70,6 +72,38 @@ Route::middleware('auth')->group(function() {
         
     });
 
+    /** Rotas Dietas */
+
+    Route::prefix('dietas')->name('dietas.')->group( function(){
+
+        Route::post('', [DietaController::class, 'store'])->name('store');
+        Route::delete('{id}', [DietaController::class, 'destroy'])->name('destroy');
+        Route::get('dashboard', [DietaController::class, 'dashboard'])->name('dashboard');
+        Route::get('{id}', [DietaController::class, 'edit'])->name('edit');
+        
+    });
+
+    /** Rotas Equipamentos */
+
+    Route::prefix('equipamentos')->name('equipamentos.')->group( function(){
+
+        Route::post('', [EquipamentoController::class, 'store'])->name('store');
+        Route::delete('{id}', [EquipamentoController::class, 'destroy'])->name('destroy');
+        Route::get('dashboard', [EquipamentoController::class, 'dashboard'])->name('dashboard');
+        Route::get('{id}', [EquipamentoController::class, 'edit'])->name('edit');
+        
+    });
+
+    /** Rotas Medicamentos */
+
+    Route::prefix('medicamentos')->name('medicamentos.')->group( function(){
+
+        Route::post('', [MedicamentoController::class, 'store'])->name('store');
+        Route::delete('{id}', [MedicamentoController::class, 'destroy'])->name('destroy');
+        Route::get('dashboard', [MedicamentoController::class, 'dashboard'])->name('dashboard');
+        Route::get('{id}', [MedicamentoController::class, 'edit'])->name('edit');
+        
+    });
 });
 
 

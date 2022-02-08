@@ -9,7 +9,11 @@ class Orcamento extends Model
 {
     use HasFactory;
 
-    protected $dates = ['data'];
+    protected $dates = [
+        'data',
+        'created_at',
+        'updated_at'
+    ];
 
     protected $guarded = [];
 
@@ -26,8 +30,24 @@ class Orcamento extends Model
         return $this->belongsToMany('App\Models\Diaria');
     }
 
-    public function materials() {
+    public function materiais() {
         return $this->belongsToMany('App\Models\Material')
         ->withPivot('quant', 'soma_custo', 'soma_venda');
     }
+
+    public function dietas() {
+        return $this->belongsToMany('App\Models\Dieta')
+        ->withPivot('quant', 'soma_custo', 'soma_venda');
+    }
+
+    public function equipamentos() {
+        return $this->belongsToMany('App\Models\Equipamento')
+        ->withPivot('quant', 'soma_custo', 'soma_venda');
+    }
+
+    public function medicamentos() {
+        return $this->belongsToMany('App\Models\Medicamento')
+        ->withPivot('quant', 'soma_custo', 'soma_venda');
+    }
+
 }

@@ -15,13 +15,12 @@ class CreateMaterialsTable extends Migration
     {
         Schema::create('materials', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
-            $table->string('tipo');
             $table->string('nome');
             $table->string('uni_medida');
             $table->double('custo');
             $table->double('venda');
             $table->foreignId('user_id')->constrained();
+            $table->timestamps();
         });
     }
 

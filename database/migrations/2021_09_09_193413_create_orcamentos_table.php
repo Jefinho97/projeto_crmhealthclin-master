@@ -23,35 +23,35 @@ class CreateOrcamentosTable extends Migration
             $table->string('status')->nullable();
             $table->string('razao_status',200)->nullable();
             $table->boolean('tipo')->default(false);
-            $table->text('termos_condicoes')->default('Não Expecificado');
-            $table->text('convenios')->default('Não Expecificado');
-            $table->text('condicoes_pag')->default('Não Expecificado');
-            $table->text('solicitante')->default('Não Informado');
+            $table->text('termos_condicoes')->nullable();
+            $table->text('convenios')->nullable();
+            $table->text('condicoes_pag')->nullable();
+            $table->text('solicitante')->nullable();
             $table->dateTime('data')->nullable();
             $table->string('medico')->nullable();
             
-            $table->double('preco_medico', 20, 2)->default(0.00);
-            $table->double('custo_equipe', 20, 2)->default(0.00);
-            $table->double('venda_equipe', 20, 2)->default(0.00);
+            $table->double('preco_medico', 20, 2)->nullable();
+            $table->double('custo_equipe', 20, 2)->nullable();
+            $table->double('venda_equipe', 20, 2)->nullable();
             
-            $table->double('custo_diaria', 20, 2)->default(0.00);
-            $table->double('venda_diaria', 20, 2)->default(0.00);
+            $table->double('custo_diaria', 20, 2)->nullable();
+            $table->double('venda_diaria', 20, 2)->nullable();
 
-            $table->double('custo_material', 20, 2)->default(0.00);
-            $table->double('venda_material', 20, 2)->default(0.00);
+            $table->double('custo_material', 20, 2)->nullable();
+            $table->double('venda_material', 20, 2)->nullable();
                        
-            $table->double('custo_medicamento', 20, 2)->default(0.00);
-            $table->double('venda_medicamento', 20, 2)->default(0.00);
+            $table->double('custo_medicamento', 20, 2)->nullable();
+            $table->double('venda_medicamento', 20, 2)->nullable();
 
-            $table->double('custo_dieta', 20, 2)->default(0.00);
-            $table->double('venda_dieta', 20, 2)->default(0.00);
+            $table->double('custo_dieta', 20, 2)->nullable();
+            $table->double('venda_dieta', 20, 2)->nullable();
             
-            $table->double('custo_equipamento', 20, 2)->default(0.00);
-            $table->double('venda_equipamento', 20, 2)->default(0.00);
+            $table->double('custo_equipamento', 20, 2)->nullable();
+            $table->double('venda_equipamento', 20, 2)->nullable();
 
-            $table->double('desconto', 20, 2)->default(0.00);
-            $table->double('valor_inicial', 20, 2)->default(0.00);
-            $table->double('valor_final', 20, 2)->default(0.00);
+            $table->double('desconto', 20, 2)->nullable();
+            $table->double('valor_inicial', 20, 2)->nullable();
+            $table->double('valor_final', 20, 2)->nullable();
             $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });

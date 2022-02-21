@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div id="event-create-container" class="col-md-6 offset-md-3">
+<div id="event-create-container" class="col-md-6 offset-md-3" onload="tables()">
     <h1>Editar Orçamento</h1>
     <form action="{{ route('orcamentos.update', [$orcamento->id]) }}" method="POST" enctype="multipart/form-data">
         @csrf
@@ -12,6 +12,11 @@
         <div class="form-group">
             <label for="title">Procedimento:</label>
             <input type="text" class="form-control" id="procedimento" name="procedimento" value="{{ $orcamento->procedimento }}">
+        </div>
+
+        <div class="form-group">
+            <label for="title">Solicitante:</label>
+            <input type="text" class="form-control" id="solicitante" name="solicitante" value="{{ $orcamento->solicitante }}">
         </div>
 
         <div class="form-group" >
@@ -27,24 +32,11 @@
                     <tr>
                         <th scope="col">Função</th>
                         <th scope="col">Quantidade</th>
+                        <th scope="col">Ação</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($orcamento->equipes as $orcequ)
-                    <tr>
-                        <td>
-                            <select name="equipes[]" id="equipes" class="form-control">
-                                <option >----</option> 
-                                @foreach($user->equipes as $equipe) 
-                                <option value="{{ $equipe->id }}" {{ $orcequ->id === $equipe->id ? 'selected' : '' }}>{{ $equipe->funcao }}</option> 
-                                @endforeach 
-                            </select>
-                        </td>
-                        <td>
-                            <input type="number" class="form-control" name="quant_equ[]" id="quant_equ" value="{{ $orcequ->pivot->quant }}">    
-                        </td>
-                    </tr>
-                    @endforeach
+
                 </tbody>
             </table>
         </div>
@@ -58,21 +50,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($orcamento->medicamentos as $orcmed)
-                    <tr>
-                        <td>
-                        <select name="madicamentos[]" id="medicamentos" class="form-control"> 
-                            <option value="">----</option>
-                            @foreach($user->medicamentos as $medicamento)
-                            <option value="{{ $medicamento->id }}" {{ $orcmed->id === $medicamento->id? 'selected': ''}}>{{ $medicamento->nome }}</option>
-                            @endforeach
-                        </select>
-                        </td>
-                        <td>
-                            <input type="number" class="form-control" name="quant_med[]" id="quant_med" placeholder="Quantidade" value="{{ $orcmed->pivot->quant }}">
-                        </td>
-                    </tr>
-                    @endforeach 
+
                 </tbody>           
         </div>       
         
@@ -85,21 +63,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($orcamento->equipamentos as $orcequipa)
-                    <tr>
-                        <td>
-                        <select name="equipamentos[]" id="equipamentos" class="form-control" style="float: left;"> 
-                            <option value="">----</option>
-                            @foreach($user->equipamentos as $equipamento)
-                            <option value="{{ $equipamento->id }}" {{ $orcequipa->id === $equipamento->id? 'selected': ''}}>{{ $equipamento->nome }}</option>
-                            @endforeach
-                        </select>
-                        </td>
-                        <td>
-                            <input type="number" class="form-control" name="quant_equipa[]" id="quant_equipa" placeholder="Quantidade" value="{{ $orcequipa->pivot->quant }}">
-                        </td>
-                    </tr>
-                    @endforeach 
+
                 </tbody>           
         </div>       
 
@@ -112,21 +76,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($orcamento->dietas as $orcdie)
-                    <tr>
-                        <td>
-                        <select name="dietas[]" id="dietas" class="form-control"> 
-                            <option value="">----</option>
-                            @foreach($user->dietas as $dieta)
-                            <option value="{{ $dieta->id }}" {{ $orcdie->id === $dieta->id? 'selected': ''}}>{{ $dieta->nome }}</option>
-                            @endforeach
-                        </select>
-                        </td>
-                        <td>
-                            <input type="number" class="form-control" name="quant_die[]" id="quant_die" placeholder="Quantidade" value="{{ $orcdie->pivot->quant }}">
-                        </td>
-                    </tr>
-                    @endforeach 
+      
                 </tbody>           
         </div>    
 
@@ -139,21 +89,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($orcamento->materiais as $orcmat)
-                    <tr>
-                        <td>
-                        <select name="materiais[]" id="materiais" class="form-control"> 
-                            <option value="">----</option>
-                            @foreach($user->materiais as $material)
-                            <option value="{{ $material->id }}" {{ $orcmat->id === $material->id? 'selected': ''}}>{{ $material->nome }}</option>
-                            @endforeach
-                        </select>
-                        </td>
-                        <td>
-                            <input type="number" class="form-control" name="quant_mat[]" id="quant_mat" placeholder="Quantidade" value="{{ $orcmat->pivot->quant }}">
-                        </td>
-                    </tr>
-                    @endforeach 
+        
                 </tbody>           
         </div>       
 
@@ -165,18 +101,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($orcamento->diarias as $orcdia)
-                    <tr>
-                        <td>
-                        <select name="diarias[]" id="diarias" class="form-control">
-                            <option value="">----</option> 
-                            @foreach($user->diarias as $diaria) 
-                            <option value="{{ $diaria->id }}" {{$orcdia->id === $diaria->id? 'selected' : ''}}>{{ $diaria->descricao }}</option> 
-                            @endforeach 
-                        </select>
-                        </td>
-                    </tr>
-                    @endforeach
+    
+                </tbody>
             </table>
         </div>
 
@@ -195,8 +121,8 @@
         </div>
         
         <div class="form-group">
-            <label for="date">Data do Procedimento:</label>
-            <input type="date" class="form-control" id="data" name="data" value="{{ $orcamento->data->format('Y-m-d') }}">
+            <label for="title">Data do Procedimento:</label>
+            <input type="date" class="form-control" id="data" name="data" >
         </div>
         <div class="form-group">
             <label for="title">Termos e condições:</label>
@@ -213,7 +139,6 @@
         <input type="submit" class="btn btn-primary" value="Editar Orcamento">
     </form>
 </div>
-
 <script>
 toastr.options.preventDuplicates = true;
 
@@ -225,7 +150,19 @@ $(document).ready( function () {
     });
     
     var table_equipe = $('#data-table-equipe').DataTable({
-        dom: 'Bfrtip',
+        "pageLength": 6,
+        "language": {
+            "zeroRecords": "Nenhum registro encontrado",
+            "emptyTable": "Nenhum Registro",
+            "processing": "Processando...",
+            "paginate": {
+                "first":      "Primeiro",
+                "last":       "Ultimo",
+                "next":       "Proximo",
+                "previous":   "Anterior"
+            },
+        },
+        dom: 'Btp',
         buttons: {
             dom: {
                 button: {
@@ -235,18 +172,46 @@ $(document).ready( function () {
             buttons:[{
                 text: 'Adicionar Profissional',
                 action: function (){
-                        table_equipe.row.add([
-                            '<select name="equipes[]" id="equipes" class="form-control"><option selected>----</option> @foreach($equipes as $equipe) <option value="{{ $equipe->id }}">{{ $equipe->funcao }}</option> @endforeach </select>',
-                            '<input type="number" class="form-control" name="quant_equ[]" id="quant_equ">'
-                        ]).draw(false);
+                        equipeAdd();
                 },
             }
             ]
-        }
+        },
     });
-
+    function fistTdEqu(equipes,id){
+        var html = '<select name="equipes[]" id="equipes" class="form-control" ><option>----</option>';
+        for(let i=0; i < equipes.length; i++){
+            let b = equipes[i].split('!');
+            var html = html+'<option value="'+b[0]+'" '+(id === b[0]? 'selected' : '')+'>'+b[1]+'</option>';
+        }
+        return html+'</select>';
+    }
+    function equipeAdd(equipes,a){
+        table_equipe.row.add([
+            fistTdEqu(equipes,a[0]),
+            '<input type="number" class="form-control" name="quant_equ[]" id="quant_equ" value="'+a[1]+'">',
+            '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delEquipe">Delete</button></div>'
+        ]).draw(false);
+    }
+    $('#data-table-equipe').on("click", "#delEquipe", function(){
+        console.log($(this).parent());
+        table_equipe.row($(this).parents('tr')).remove().draw(false);
+    });
+  
     var table_medicamento = $('#data-table-medicamento').DataTable({
-        dom: 'Bfrtip',
+        "pageLength": 6,
+        "language": {
+            "zeroRecords": "Nenhum registro encontrado",
+            "emptyTable": "Nenhum Registro",
+            "processing": "Processando...",
+            "paginate": {
+                "first":      "Primeiro",
+                "last":       "Ultimo",
+                "next":       "Proximo",
+                "previous":   "Anterior"
+            },
+        },
+        dom: 'Btp',
         buttons: {
             dom: {
                 button: {
@@ -256,18 +221,46 @@ $(document).ready( function () {
             buttons:[{
                 text: 'Adicionar Medicamento',
                 action: function (){
-                        table_equipe.row.add([
-                            '<select name="medicamentos[]" id="medicamentos" class="form-control"><option selected>----</option> @foreach($medicamentos as $medicamento) <option value="{{ $medicamento->id }}">{{ $medicamento->nome }}</option> @endforeach </select>',
-                            '<input type="number" class="form-control" name="quant_med[]" id="quant_med">'
-                        ]).draw(false);
+                        medicamentoAdd();
                 },
             }
             ]
         }
     });
+    function fistTdMed(medicamentos,id){
+        var html = '<select name="medicamentos[]" id="medicamentos" class="form-control" ><option>----</option>';
+        for(let i=0; i < medicamentos.length; i++){
+            let b = medicamentos[i].split('!');
+            var html = html+'<option value="'+b[0]+'" '+(id === b[0]? 'selected' : '')+'>'+b[1]+'</option>';
+        }
+        return html+'</select>';
+    }
+    function medicamentoAdd(medicamentos,a){
+        table_medicamento.row.add([
+            fistTdMed(medicamentos,a[0]),
+            '<input type="number" class="form-control" name="quant_med[]" id="quant_med" value="'+a[1]+'">',
+            '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delMedicamento">Delete</button></div>'
+        ]).draw(false);
+    }
+    $('#data-table-medicamento').on("click", "#delMedicamento", function(){
+        console.log($(this).parent());
+        table_medicamento.row($(this).parents('tr')).remove().draw(false);
+    });
 
     var table_equipamento = $('#data-table-equipamento').DataTable({
-        dom: 'Bfrtip',
+        "pageLength": 6,
+        "language": {
+            "zeroRecords": "Nenhum registro encontrado",
+            "emptyTable": "Nenhum Registro",
+            "processing": "Processando...",
+            "paginate": {
+                "first":      "Primeiro",
+                "last":       "Ultimo",
+                "next":       "Proximo",
+                "previous":   "Anterior"
+            },
+        },
+        dom: 'Btp',
         buttons: {
             dom: {
                 button: {
@@ -277,18 +270,46 @@ $(document).ready( function () {
             buttons:[{
                 text: 'Adicionar Equipamento',
                 action: function (){
-                        table_equipamento.row.add([
-                            '<select name="equipamentos[]" id="equipamentos" class="form-control"><option selected>----</option> @foreach($equipamentos as $equipamento) <option value="{{ $equipamento->id }}">{{ $equipamento->nome }}</option> @endforeach </select>',
-                            '<input type="number" class="form-control" name="quant_equipa[]" id="quant_equipa">'
-                        ]).draw(false);
+                        equipamentoAdd;
                 },
             }
             ]
         }
     });
+    function fistTdEquipa(equipamentos,id){
+        var html = '<select name="equipamentos[]" id="equipamentos" class="form-control" ><option>----</option>';
+        for(let i=0; i < equipamentos.length; i++){
+            let b = equipamentos[i].split('!');
+            var html = html+'<option value="'+b[0]+'" '+(id === b[0]? 'selected' : '')+'>'+b[1]+'</option>';
+        }
+        return html+'</select>';
+    }
+    function equipamentoAdd(equipamentos,a){
+        table_equipamento.row.add([
+            fistTdEquipa(equipamentos,a[0]),
+            '<input type="number" class="form-control" name="quant_equipa[]" id="quant_equipa" value="'+a[1]+'">',
+            '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delEquipamento">Delete</button></div>'
+        ]).draw(false);
+    }
+    $('#data-table-equipamento').on("click", "#delEquipamento", function(){
+        console.log($(this).parent());
+        table_equipamento.row($(this).parents('tr')).remove().draw(false);
+    });
 
     var table_dieta = $('#data-table-dieta').DataTable({
-        dom: 'Bfrtip',
+        "pageLength": 6,
+        "language": {
+            "zeroRecords": "Nenhum registro encontrado",
+            "emptyTable": "Nenhum Registro",
+            "processing": "Processando...",
+            "paginate": {
+                "first":      "Primeiro",
+                "last":       "Ultimo",
+                "next":       "Proximo",
+                "previous":   "Anterior"
+            },
+        },
+        dom: 'Btp',
         buttons: {
             dom: {
                 button: {
@@ -298,18 +319,46 @@ $(document).ready( function () {
             buttons:[{
                 text: 'Adicionar Dieta',
                 action: function (){
-                        table_dieta.row.add([
-                            '<select name="dietas[]" id="dietas" class="form-control"><option selected>----</option> @foreach($dietas as $dieta) <option value="{{ $dieta->id }}">{{ $dieta->nome }}</option> @endforeach </select>',
-                            '<input type="number" class="form-control" name="quant_die[]" id="quant_die">'
-                        ]).draw(false);
+                        dietaAdd();
                 },
             }
             ]
         }
     });
+    function fistTdDie(dietas,id){
+        var html = '<select name="dietas[]" id="dietas" class="form-control" ><option>----</option>';
+        for(let i=0; i < dietas.length; i++){
+            let b = dietas[i].split('!');
+            var html = html+'<option value="'+b[0]+'" '+(id === b[0]? 'selected' : '')+'>'+b[1]+'</option>';
+        }
+        return html+'</select>';
+    }
+    function dietaAdd(dietas,a){
+        table_dieta.row.add([
+            fistTdDie(dietas,a[0]),
+            '<input type="number" class="form-control" name="quant_die[]" id="quant_die" value="'+a[1]+'">',
+            '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delDieta">Delete</button></div>'
+        ]).draw(false);
+    }
+    $('#data-table-dieta').on("click", "#delDieta", function(){
+        console.log($(this).parent());
+        table_dieta.row($(this).parents('tr')).remove().draw(false);
+    });
 
     var table_material = $('#data-table-material').DataTable({
-        dom: 'Bfrtip',
+        "pageLength": 6,
+        "language": {
+            "zeroRecords": "Nenhum registro encontrado",
+            "emptyTable": "Nenhum Registro",
+            "processing": "Processando...",
+            "paginate": {
+                "first":      "Primeiro",
+                "last":       "Ultimo",
+                "next":       "Proximo",
+                "previous":   "Anterior"
+            },
+        },
+        dom: 'Btp',
         buttons: {
             dom: {
                 button: {
@@ -319,18 +368,46 @@ $(document).ready( function () {
             buttons:[{
                 text: 'Adicionar Material',
                 action: function (){
-                        table_material.row.add([
-                            '<select name="materials[]" id="materials" class="form-control"><option value="" selected>----</option>@foreach($materiais as $material)<option value="{{ $material->id }}">{{ $material->nome }}</option> @endforeach </select>',
-                            '<input type="number" class="form-control" name="quant_mat[]" id="quant_mat" placeholder="Quantidade">>'
-                        ]).draw(false);
+                        materialAdd();
                 },
             }
             ]
         }
     });
+    function fistTdMat(materiais,id){
+        var html = '<select name="materiais[]" id="materiais" class="form-control" ><option>----</option>';
+        for(let i=0; i < materiais.length; i++){
+            let b = materiais[i].split('!');
+            var html = html+'<option value="'+b[0]+'" '+(id === b[0]? 'selected' : '')+'>'+b[1]+'</option>';
+        }
+        return html+'</select>';
+    }
+    function materialAdd(materiais,a){
+        table_material.row.add([
+            fistTdMat(materiais,a[0]),
+            '<input type="number" class="form-control" name="quant_mat[]" id="quant_mat" value="'+a[1]+'">',
+            '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delMaterial">Delete</button></div>'
+        ]).draw(false);
+    }
+    $('#data-table-material').on("click", "#delMaterial", function(){
+        console.log($(this).parent());
+        table_material.row($(this).parents('tr')).remove().draw(false);
+    });
 
     var table_diaria = $('#data-table-diaria').DataTable({
-        dom: 'Bfrtip',
+        "pageLength": 6,
+        "language": {
+            "zeroRecords": "Nenhum registro encontrado",
+            "emptyTable": "Nenhum Registro",
+            "processing": "Processando...",
+            "paginate": {
+                "first":      "Primeiro",
+                "last":       "Ultimo",
+                "next":       "Proximo",
+                "previous":   "Anterior"
+            },
+        },
+        dom: 'Btp',
         buttons: {
             dom: {
                 button: {
@@ -340,18 +417,89 @@ $(document).ready( function () {
             buttons:[{
                 text: 'Adicionar Diaria',
                 action: function (){
-                        table_diaria.row.add([
-                            '<select name="diarias[]" id="diarias" class="form-control"><option value="" selected>----</option> @foreach($diarias as $diaria) <option value="{{ $diaria->id }}">{{ $diaria->descricao }}</option> @endforeach </select>'
-                        ]).draw(false);
+                        diariaAdd();
                 },
             }
             ]
         }
-    });  
-        
+    }); 
+    function fistTdDia(diarias,id){
+        var html = '<select name="diarias[]" id="diarias" class="form-control" ><option>----</option>';
+        for(let i=0; i < diarias.length; i++){
+            let b = diarias[i].split('!');
+            var html = html+'<option value="'+b[0]+'" '+(id === b[0]? 'selected' : '')+'>'+b[1]+'</option>';
+        }
+        return html+'</select>';
+    }
+    function diariaAdd(diarias,a){
+        table_diaria.row.add([
+            fistTdDia(diarias,a),
+            '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delDiaria">Delete</button></div>'
+        ]).draw(false);
+    } 
+    $('#data-table-diaria').on("click", "#delDiaria", function(){
+        console.log($(this).parent());
+        table_diaria.row($(this).parents('tr')).remove().draw(false);
+    });    
+
     $('#show').on('click',function() {
         $("#medprof").toggle(this.checked);
     });
+    tables();
+    function tables(){
+        var string_orcequ = "<?php echo $string_orcequ;?>";
+        var orcequ = string_orcequ.split('|');
+        var string_equipes = "<?php echo $string_equipes;?>";
+        var equipes = string_equipes.split('|');
+        for(let i=0; i < orcequ.length; i++){
+            var a = orcequ[i].split('!');
+            equipeAdd(equipes,a);
+        }
+        
+        var string_orcmed = "<?php echo $string_orcmed;?>";
+        var orcmed = string_orcmed.split('|');
+        var string_medicamentos = "<?php echo $string_medicamentos;?>";
+        var medicamentos = string_medicamentos.split('|');
+        for(let i=0; i < orcmed.length; i++){
+            var a = orcmed[i].split('!');
+            medicamentoAdd(medicamentos,a);
+        }
+
+        var string_orcequipa = "<?php echo $string_orcequipa;?>";
+        var orcequipa = string_orcequipa.split('|');
+        var string_equipamentos = "<?php echo $string_equipamentos;?>";
+        var equipamentos = string_equipamentos.split('|');
+        for(let i=0; i < orcequipa.length; i++){
+            var a = orcequipa[i].split('!');
+            equipamentoAdd(equipamentos,a);
+        }
+
+        var string_orcdie = "<?php echo $string_orcdie;?>";
+        var orcdie = string_orcdie.split('|');
+        var string_dietas = "<?php echo $string_dietas;?>";
+        var dietas = string_dietas.split('|');
+        for(let i=0; i < orcdie.length; i++){
+            var a = orcdie[i].split('!');
+            dietaAdd(dietas,a);
+        }
+
+        var string_orcmat = "<?php echo $string_orcmat;?>";
+        var orcmat = string_orcmat.split('|');
+        var string_materiais = "<?php echo $string_materiais;?>";
+        var materiais = string_materiais.split('|');
+        for(let i=0; i < orcmat.length; i++){
+            var a = orcmat[i].split('!');
+            materialAdd(materiais,a);
+        }
+
+        var string_orcdia = "<?php echo $string_orcdia;?>";
+        var orcdia = string_orcdia.split('|');
+        var string_diarias = "<?php echo $string_diarias;?>";
+        var diarias = string_diarias.split('|');
+        for(let i=0; i < orcdia.length; i++){
+            diariaAdd(diarias,orcdia[i]);
+        }
+    }
 });
 </script>
 @endsection

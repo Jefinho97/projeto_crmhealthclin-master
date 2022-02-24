@@ -47,6 +47,7 @@
                     <tr>
                         <th scope="col">Medicamentos</th>
                         <th scope="col">Quantidade</th>
+                        <th scope="col">Ação</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -60,6 +61,7 @@
                     <tr>
                         <th scope="col">Equipamentos</th>
                         <th scope="col">Quantidade</th>
+                        <th scope="col">Ação</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -73,6 +75,7 @@
                     <tr>
                         <th scope="col">Dietas</th>
                         <th scope="col">Quantidade</th>
+                        <th scope="col">Ação</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -86,6 +89,7 @@
                     <tr>
                         <th scope="col">Materiais</th>
                         <th scope="col">Quantidade</th>
+                        <th scope="col">Ação</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -98,6 +102,7 @@
                 <thead>
                     <tr>
                         <th scope="col">Diarias</th>
+                        <th scope="col">Ação</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -148,7 +153,19 @@ $(document).ready( function () {
             'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
         }
     });
-    
+    var string_equipes = "<?php echo $string_equipes;?>";
+    var equipes = string_equipes.split('|');
+    var string_medicamentos = "<?php echo $string_medicamentos;?>";
+    var medicamentos = string_medicamentos.split('|');
+    var string_equipamentos = "<?php echo $string_equipamentos;?>";
+    var equipamentos = string_equipamentos.split('|');
+    var string_dietas = "<?php echo $string_dietas;?>";
+    var dietas = string_dietas.split('|');
+    var string_materiais = "<?php echo $string_materiais;?>";
+    var materiais = string_materiais.split('|');
+    var string_diarias = "<?php echo $string_diarias;?>";
+    var diarias = string_diarias.split('|');
+
     var table_equipe = $('#data-table-equipe').DataTable({
         "pageLength": 6,
         "language": {
@@ -172,27 +189,16 @@ $(document).ready( function () {
             buttons:[{
                 text: 'Adicionar Profissional',
                 action: function (){
-                        equipeAdd();
+                    table_equipe.row.add([
+                        '<select name="equipes[]" id="equipes" class="form-control" ><option>----</option>@foreach($orcamento->equipes as $orcequ)<option value="{{ $orcequ->id }}">{{$orcequ->funcao}}</option>@endforeach</select>',
+                        '<input type="number" class="form-control" name="quant_equ[]" id="quant_equ">',
+                        '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delEquipe">Delete</button></div>'
+                    ]).draw(false);
                 },
             }
             ]
         },
     });
-    function fistTdEqu(equipes,id){
-        var html = '<select name="equipes[]" id="equipes" class="form-control" ><option>----</option>';
-        for(let i=0; i < equipes.length; i++){
-            let b = equipes[i].split('!');
-            var html = html+'<option value="'+b[0]+'" '+(id === b[0]? 'selected' : '')+'>'+b[1]+'</option>';
-        }
-        return html+'</select>';
-    }
-    function equipeAdd(equipes,a){
-        table_equipe.row.add([
-            fistTdEqu(equipes,a[0]),
-            '<input type="number" class="form-control" name="quant_equ[]" id="quant_equ" value="'+a[1]+'">',
-            '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delEquipe">Delete</button></div>'
-        ]).draw(false);
-    }
     $('#data-table-equipe').on("click", "#delEquipe", function(){
         console.log($(this).parent());
         table_equipe.row($(this).parents('tr')).remove().draw(false);
@@ -221,27 +227,16 @@ $(document).ready( function () {
             buttons:[{
                 text: 'Adicionar Medicamento',
                 action: function (){
-                        medicamentoAdd();
+                    table_medicamento.row.add([
+                        '<select name="medicamentos[]" id="medicamentos" class="form-control" ><option>----</option>@foreach($orcamento->medicamentos as $orcmed)<option value="{{$orcmed->id}}">{{$orcmed->nome}}</option>@endforeach</select>',
+                        '<input type="number" class="form-control" name="quant_med[]" id="quant_med">',
+                        '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delMedicamento">Delete</button></div>'
+                    ]).draw(false);
                 },
             }
             ]
         }
     });
-    function fistTdMed(medicamentos,id){
-        var html = '<select name="medicamentos[]" id="medicamentos" class="form-control" ><option>----</option>';
-        for(let i=0; i < medicamentos.length; i++){
-            let b = medicamentos[i].split('!');
-            var html = html+'<option value="'+b[0]+'" '+(id === b[0]? 'selected' : '')+'>'+b[1]+'</option>';
-        }
-        return html+'</select>';
-    }
-    function medicamentoAdd(medicamentos,a){
-        table_medicamento.row.add([
-            fistTdMed(medicamentos,a[0]),
-            '<input type="number" class="form-control" name="quant_med[]" id="quant_med" value="'+a[1]+'">',
-            '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delMedicamento">Delete</button></div>'
-        ]).draw(false);
-    }
     $('#data-table-medicamento').on("click", "#delMedicamento", function(){
         console.log($(this).parent());
         table_medicamento.row($(this).parents('tr')).remove().draw(false);
@@ -270,27 +265,16 @@ $(document).ready( function () {
             buttons:[{
                 text: 'Adicionar Equipamento',
                 action: function (){
-                        equipamentoAdd;
+                    table_equipamento.row.add([
+                        '<select name="equipamentos[]" id="equipamentos" class="form-control" ><option>----</option>@foreach($orcamento->equipamentos as $orcequipa)<option value="{{$orcequipa->id}}">{{$orcequipa->nome}}</option>@endforeach</select>',
+                        '<input type="number" class="form-control" name="quant_equipa[]" id="quant_equipa">',
+                        '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delEquipamento">Delete</button></div>'
+                    ]).draw(false);
                 },
             }
             ]
         }
     });
-    function fistTdEquipa(equipamentos,id){
-        var html = '<select name="equipamentos[]" id="equipamentos" class="form-control" ><option>----</option>';
-        for(let i=0; i < equipamentos.length; i++){
-            let b = equipamentos[i].split('!');
-            var html = html+'<option value="'+b[0]+'" '+(id === b[0]? 'selected' : '')+'>'+b[1]+'</option>';
-        }
-        return html+'</select>';
-    }
-    function equipamentoAdd(equipamentos,a){
-        table_equipamento.row.add([
-            fistTdEquipa(equipamentos,a[0]),
-            '<input type="number" class="form-control" name="quant_equipa[]" id="quant_equipa" value="'+a[1]+'">',
-            '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delEquipamento">Delete</button></div>'
-        ]).draw(false);
-    }
     $('#data-table-equipamento').on("click", "#delEquipamento", function(){
         console.log($(this).parent());
         table_equipamento.row($(this).parents('tr')).remove().draw(false);
@@ -319,27 +303,16 @@ $(document).ready( function () {
             buttons:[{
                 text: 'Adicionar Dieta',
                 action: function (){
-                        dietaAdd();
+                    table_dieta.row.add([
+                        '<select name="dietas[]" id="dietas" class="form-control" ><option>----</option>@foreach($orcamento->dietas as $orcdie)<option value="{{$orcdie->id}}">{{$orcdie->nome}}</option>@endforeach</select>',
+                        '<input type="number" class="form-control" name="quant_die[]" id="quant_die">',
+                        '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delDieta">Delete</button></div>'
+                    ]).draw(false);
                 },
             }
             ]
         }
     });
-    function fistTdDie(dietas,id){
-        var html = '<select name="dietas[]" id="dietas" class="form-control" ><option>----</option>';
-        for(let i=0; i < dietas.length; i++){
-            let b = dietas[i].split('!');
-            var html = html+'<option value="'+b[0]+'" '+(id === b[0]? 'selected' : '')+'>'+b[1]+'</option>';
-        }
-        return html+'</select>';
-    }
-    function dietaAdd(dietas,a){
-        table_dieta.row.add([
-            fistTdDie(dietas,a[0]),
-            '<input type="number" class="form-control" name="quant_die[]" id="quant_die" value="'+a[1]+'">',
-            '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delDieta">Delete</button></div>'
-        ]).draw(false);
-    }
     $('#data-table-dieta').on("click", "#delDieta", function(){
         console.log($(this).parent());
         table_dieta.row($(this).parents('tr')).remove().draw(false);
@@ -368,27 +341,16 @@ $(document).ready( function () {
             buttons:[{
                 text: 'Adicionar Material',
                 action: function (){
-                        materialAdd();
+                    table_material.row.add([
+                        '<select name="materiais[]" id="materiais" class="form-control" ><option>----</option>@foreach($orcamento->materiais as $orcmat)<option value="{{$orcmat->id}}">{{$orcmat->nome}}</option>@endforeach</select>',
+                        '<input type="number" class="form-control" name="quant_mat[]" id="quant_mat">',
+                        '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delMaterial">Delete</button></div>'
+                    ]).draw();
                 },
             }
             ]
         }
     });
-    function fistTdMat(materiais,id){
-        var html = '<select name="materiais[]" id="materiais" class="form-control" ><option>----</option>';
-        for(let i=0; i < materiais.length; i++){
-            let b = materiais[i].split('!');
-            var html = html+'<option value="'+b[0]+'" '+(id === b[0]? 'selected' : '')+'>'+b[1]+'</option>';
-        }
-        return html+'</select>';
-    }
-    function materialAdd(materiais,a){
-        table_material.row.add([
-            fistTdMat(materiais,a[0]),
-            '<input type="number" class="form-control" name="quant_mat[]" id="quant_mat" value="'+a[1]+'">',
-            '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delMaterial">Delete</button></div>'
-        ]).draw(false);
-    }
     $('#data-table-material').on("click", "#delMaterial", function(){
         console.log($(this).parent());
         table_material.row($(this).parents('tr')).remove().draw(false);
@@ -417,26 +379,15 @@ $(document).ready( function () {
             buttons:[{
                 text: 'Adicionar Diaria',
                 action: function (){
-                        diariaAdd();
+                    table_diaria.row.add([
+                        '<select name="diarias[]" id="diarias" class="form-control" ><option>----</option>@foreach($orcamento->diarias as $orcdia)<option value="{{$orcdia->id}}">{{$orcdia->nome}}</option>@endforeach</select>',
+                        '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delDiaria">Delete</button></div>'
+                    ]).draw(false);
                 },
             }
             ]
         }
     }); 
-    function fistTdDia(diarias,id){
-        var html = '<select name="diarias[]" id="diarias" class="form-control" ><option>----</option>';
-        for(let i=0; i < diarias.length; i++){
-            let b = diarias[i].split('!');
-            var html = html+'<option value="'+b[0]+'" '+(id === b[0]? 'selected' : '')+'>'+b[1]+'</option>';
-        }
-        return html+'</select>';
-    }
-    function diariaAdd(diarias,a){
-        table_diaria.row.add([
-            fistTdDia(diarias,a),
-            '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delDiaria">Delete</button></div>'
-        ]).draw(false);
-    } 
     $('#data-table-diaria').on("click", "#delDiaria", function(){
         console.log($(this).parent());
         table_diaria.row($(this).parents('tr')).remove().draw(false);
@@ -448,56 +399,115 @@ $(document).ready( function () {
     tables();
     function tables(){
         var string_orcequ = "<?php echo $string_orcequ;?>";
-        var orcequ = string_orcequ.split('|');
-        var string_equipes = "<?php echo $string_equipes;?>";
-        var equipes = string_equipes.split('|');
-        for(let i=0; i < orcequ.length; i++){
-            var a = orcequ[i].split('!');
-            equipeAdd(equipes,a);
+        if(string_orcequ != null){
+            var orcequ = string_orcequ.split('|');
+            for(let i=0; i < orcequ.length; i++){
+                var a = orcequ[i].split('!');
+                var html = '<select name="equipes[]" id="equipes" class="form-control" ><option>----</option>';
+                for(let i=0; i < equipes.length; i++){
+                    let equipe = equipes[i].split('!');
+                    var html = html+'<option value="'+equipe[0]+'" '+(a[0] === equipe[0]? 'selected' : '')+'>'+equipe[1]+'</option>';
+                }
+                html = html+'</select>';
+                table_equipe.row.add([
+                    html,
+                    '<input type="number" class="form-control" name="quant_equ[]" id="quant_equ" value="'+a[1]+'">',
+                    '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delEquipe">Delete</button></div>'
+                ]).draw();
+            }
         }
-        
+
         var string_orcmed = "<?php echo $string_orcmed;?>";
-        var orcmed = string_orcmed.split('|');
-        var string_medicamentos = "<?php echo $string_medicamentos;?>";
-        var medicamentos = string_medicamentos.split('|');
-        for(let i=0; i < orcmed.length; i++){
-            var a = orcmed[i].split('!');
-            medicamentoAdd(medicamentos,a);
+        if(string_orcmed != null){
+            var orcmed = string_orcmed.split('|');
+            for(let i=0; i < orcmed.length; i++){
+                var a = orcmed[i].split('!');
+                var html = '<select name="medicamentos[]" id="medicamentos" class="form-control" ><option>----</option>';
+                for(let i=0; i < medicamentos.length; i++){
+                    let b = medicamentos[i].split('!');
+                    var html = html+'<option value="'+b[0]+'" '+(a[0] === b[0]? 'selected' : '')+'>'+b[1]+'</option>';
+                }
+                html = html+'</select>';
+                table_medicamento.row.add([
+                    html,
+                    '<input type="number" class="form-control" name="quant_med[]" id="quant_med" value="'+a[1]+'">',
+                    '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delMedicamento">Delete</button></div>'
+                ]).draw();
+            }
         }
 
         var string_orcequipa = "<?php echo $string_orcequipa;?>";
-        var orcequipa = string_orcequipa.split('|');
-        var string_equipamentos = "<?php echo $string_equipamentos;?>";
-        var equipamentos = string_equipamentos.split('|');
-        for(let i=0; i < orcequipa.length; i++){
-            var a = orcequipa[i].split('!');
-            equipamentoAdd(equipamentos,a);
-        }
+        if(string_orcequipa != null){
+            var orcequipa = string_orcequipa.split('|');
+            for(let i=0; i < orcequipa.length; i++){
+                var a = orcequipa[i].split('!');
+                var html = '<select name="equipamentos[]" id="equipamentos" class="form-control" ><option>----</option>';
+                for(let i=0; i < equipamentos.length; i++){
+                    let b = equipamentos[i].split('!');
+                    var html = html+'<option value="'+b[0]+'" '+(a[0] === b[0]? 'selected' : '')+'>'+b[1]+'</option>';
+                }
+                htmp = html+'</select>';
+                table_equipamento.row.add([
+                    html,
+                    '<input type="number" class="form-control" name="quant_equipa[]" id="quant_equipa" value="'+a[1]+'">',
+                    '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delEquipamento">Delete</button></div>'
+                ]).draw(false);
+            }
+        }       
 
         var string_orcdie = "<?php echo $string_orcdie;?>";
-        var orcdie = string_orcdie.split('|');
-        var string_dietas = "<?php echo $string_dietas;?>";
-        var dietas = string_dietas.split('|');
-        for(let i=0; i < orcdie.length; i++){
-            var a = orcdie[i].split('!');
-            dietaAdd(dietas,a);
+        if(string_orcdie != null){
+            var orcdie = string_orcdie.split('|');
+            for(let i=0; i < orcdie.length; i++){
+                var a = orcdie[i].split('!');
+                var html = '<select name="dietas[]" id="dietas" class="form-control" ><option>----</option>';
+                for(let i=0; i < dietas.length; i++){
+                    let b = dietas[i].split('!');
+                    var html = html+'<option value="'+b[0]+'" '+(a[0] === b[0]? 'selected' : '')+'>'+b[1]+'</option>';
+                }
+                html = html+'</select>';
+                table_dieta.row.add([
+                    html,
+                    '<input type="number" class="form-control" name="quant_die[]" id="quant_die" value="'+a[1]+'">',
+                    '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delDieta">Delete</button></div>'
+                ]).draw(false);
+            }
         }
-
+        
         var string_orcmat = "<?php echo $string_orcmat;?>";
-        var orcmat = string_orcmat.split('|');
-        var string_materiais = "<?php echo $string_materiais;?>";
-        var materiais = string_materiais.split('|');
-        for(let i=0; i < orcmat.length; i++){
-            var a = orcmat[i].split('!');
-            materialAdd(materiais,a);
+        if(string_orcmat != null){
+            var orcmat = string_orcmat.split('|');
+            for(let i=0; i < orcmat.length; i++){
+                var a = orcmat[i].split('!');
+                var html = '<select name="materiais[]" id="materiais" class="form-control" ><option>----</option>';
+                for(let i=0; i < materiais.length; i++){
+                    let b = materiais[i].split('!');
+                    var html = html+'<option value="'+b[0]+'" '+(a[0] === b[0]? 'selected' : '')+'>'+b[1]+'</option>';
+                }
+                html = html+'</select>';
+                table_material.row.add([
+                    html,
+                    '<input type="number" class="form-control" name="quant_mat[]" id="quant_mat" value="'+a[1]+'">',
+                    '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delMaterial">Delete</button></div>'
+                ]).draw(false);
+            }
         }
 
         var string_orcdia = "<?php echo $string_orcdia;?>";
-        var orcdia = string_orcdia.split('|');
-        var string_diarias = "<?php echo $string_diarias;?>";
-        var diarias = string_diarias.split('|');
-        for(let i=0; i < orcdia.length; i++){
-            diariaAdd(diarias,orcdia[i]);
+        if(string_orcdia != null){
+            var orcdia = string_orcdia.split('|');
+            for(let i=0; i < orcdia.length; i++){
+                var html = '<select name="diarias[]" id="diarias" class="form-control" ><option>----</option>';
+                for(let i=0; i < diarias.length; i++){
+                    let b = diarias[i].split('!');
+                    var html = html+'<option value="'+b[0]+'" '+(orcdia[i] === b[0]? 'selected' : '')+'>'+b[1]+'</option>';
+                }
+                html = html+'</select>';
+                table_diaria.row.add([
+                    html,
+                    '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delDiaria">Delete</button></div>'
+                ]).draw(false);
+            }
         }
     }
 });

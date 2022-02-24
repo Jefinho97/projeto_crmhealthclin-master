@@ -121,17 +121,19 @@ class OrcamentoController extends Controller
             $b = implode("!",$a);
             $equipes[] = $b;
         }
-        foreach ($orcamento->equipes as $pivot) {
-            $a = [
-                0 => $pivot->pivot->equipe_id,
-                1 => $pivot->pivot->quant,
-            ];
-            $b = implode("!",$a);
-            $orcequ[] = $b;
+        if(isset($orcamento->equipes) && $orcamento->equipes->count() > 0){
+            foreach ($orcamento->equipes as $pivot) {
+                $a = [
+                    0 => $pivot->pivot->equipe_id,
+                    1 => $pivot->pivot->quant,
+                ];
+                $b = implode("!",$a);
+                $orcequ[] = $b;
+            }     
         }
-        $string_orcequ = implode("|", $orcequ);
+        $string_orcequ = isset($orcequ)?implode("|", $orcequ):null;   
         $string_equipes = implode("|",$equipes);
-        
+
         foreach($user->medicamentos as $medicamento){
             $a = [
                 0 => $medicamento->id,
@@ -140,17 +142,20 @@ class OrcamentoController extends Controller
             $b = implode("!",$a);
             $medicamentos[] = $b;
         }
-        foreach ($orcamento->medicamentos as $pivot) {
-            $a = [
-                0 => $pivot->pivot->medicamento_id,
-                1 => $pivot->pivot->quant,
-            ];
-            $b = implode("!",$a);
-            $orcmed[] = $b;
+        if(isset($orcamento->medicamentos) && $orcamento->medicamentos->count() > 0){
+            foreach ($orcamento->medicamentos as $pivot) {
+                $a = [
+                    0 => $pivot->pivot->medicamento_id,
+                    1 => $pivot->pivot->quant,
+                ];
+                $b = implode("!",$a);
+                $orcmed[] = $b;
+            }
+            
         }
-        $string_orcmed = implode("|", $orcmed);
+        $string_orcmed = isset($orcmed)?implode("|", $orcmed):null;
         $string_medicamentos = implode("|",$medicamentos);
-
+        
         foreach($user->equipamentos as $equipamento){
             $a = [
                 0 => $equipamento->id,
@@ -159,15 +164,18 @@ class OrcamentoController extends Controller
             $b = implode("!",$a);
             $equipamentos[] = $b;
         }
-        foreach ($orcamento->equipamentos as $pivot) {
-            $a = [
-                0 => $pivot->pivot->equipamento_id,
-                1 => $pivot->pivot->quant,
-            ];
-            $b = implode("!",$a);
-            $orcequipa[] = $b;
+        if(isset($orcamento->equipamentos) && $orcamento->equipamentos->count() > 0){
+            foreach ($orcamento->equipamentos as $pivot) {
+                $a = [
+                    0 => $pivot->pivot->equipamento_id,
+                    1 => $pivot->pivot->quant,
+                ];
+                $b = implode("!",$a);
+                $orcequipa[] = $b;
+            }
+
         }
-        $string_orcequipa = implode("|", $orcequipa);
+        $string_orcequipa = isset($orcequipa)?implode("|", $orcequipa):null;
         $string_equipamentos = implode("|",$equipamentos);
 
         foreach($user->dietas as $dieta){
@@ -178,17 +186,19 @@ class OrcamentoController extends Controller
             $b = implode("!",$a);
             $dietas[] = $b;
         }
-        foreach ($orcamento->dietas as $pivot) {
-            $a = [
-                0 => $pivot->pivot->dieta_id,
-                1 => $pivot->pivot->quant,
-            ];
-            $b = implode("!",$a);
-            $orcdie[] = $b;
+        if(isset($orcamento->dietas) && $orcamento->dietas->count() > 0){
+            foreach ($orcamento->dietas as $pivot) {
+                $a = [
+                    0 => $pivot->pivot->dieta_id,
+                    1 => $pivot->pivot->quant,
+                ];
+                $b = implode("!",$a);
+                $orcdie[] = $b;
+            }
         }
-        $string_orcdie = implode("|", $orcdie);
+        $string_orcdie = isset($orcdie)?implode("|", $orcdie):null;
         $string_dietas = implode("|",$dietas);
-
+        
         foreach($user->materiais as $material){
             $a = [
                 0 => $material->id,
@@ -197,15 +207,17 @@ class OrcamentoController extends Controller
             $b = implode("!",$a);
             $materiais[] = $b;
         }
-        foreach ($orcamento->materiais as $pivot) {
-            $a = [
-                0 => $pivot->pivot->material_id,
-                1 => $pivot->pivot->quant,
-            ];
-            $b = implode("!",$a);
-            $orcmat[] = $b;
-        }
-        $string_orcmat = implode("|", $orcmat);
+        if(isset($orcamento->materiais) && $orcamento->materiais->count() > 0){
+            foreach ($orcamento->materiais as $pivot) {
+                $a = [
+                    0 => $pivot->pivot->material_id,
+                    1 => $pivot->pivot->quant,
+                ];
+                $b = implode("!",$a);
+                $orcmat[] = $b;
+            }
+        }            
+        $string_orcmat = isset($orcmat)?implode("|", $orcmat):null;
         $string_materiais = implode("|",$materiais);
 
         foreach($user->diarias as $diaria){
@@ -216,13 +228,15 @@ class OrcamentoController extends Controller
             $b = implode("!",$a);
             $diarias[] = $b;
         }
-        foreach ($orcamento->diarias as $pivot) {
-            $orcdia[] = $pivot->pivot->diaria_id;
+        if(isset($orcamento->diarias) && $orcamento->diarias->count() > 0){
+            foreach ($orcamento->diarias as $pivot) {
+                $orcdia[] = $pivot->pivot->diaria_id;
+            }
         }
-        $string_orcdia = implode("|", $orcdia);
+        $string_orcdia = isset($orcdia)?implode("|", $orcdia):null;
         $string_diarias = implode("|",$diarias);
 
-        return view('orcamentos.edit', ['orcamento' => $orcamento, 'string_orcequ' => $string_orcequ, 'string_equipes' => $string_equipes, 'string_orcmed' => $string_orcmed, 'string_medicamentos' => $string_medicamentos, 'string_orcdia' => $string_orcdia, 'string_diarias' => $string_diarias, 'string_orcdie' => $string_orcdie, 'string_dietas' => $string_dietas, 'string_orcequipa' => $string_orcequipa, 'string_equipamentos' => $string_equipamentos, 'string_orcmat' => $string_orcmat, 'string_materiais' => $string_materiais]);
+        return view('orcamentos.edit',['orcamento' => $orcamento, 'string_orcequ' => $string_orcequ, 'string_equipes' => $string_equipes,'string_orcmed' => $string_orcmed, 'string_medicamentos' => $string_medicamentos,'string_orcdia' => $string_orcdia, 'string_diarias' => $string_diarias,'string_orcdie' => $string_orcdie, 'string_dietas' => $string_dietas,'string_orcequipa' => $string_orcequipa, 'string_equipamentos' => $string_equipamentos,'string_orcmat' => $string_orcmat, 'string_materiais' => $string_materiais]);
     }
 
     public function update(Request $request)
@@ -266,7 +280,7 @@ class OrcamentoController extends Controller
             for ($mat = 0; $mat < $quant; $mat++) {
                 $material = Equipe::findOrFail($materiais[$mat]);
                 if (is_null($material) == false) {
-                    $q = $request->quant_mat[$equ];
+                    $q = $request->quant_mat[$mat];
                     $soma_custo = $material->custo * $q;
                     $soma_venda = $material->venda * $q;
                     $x->venda_material += $soma_venda;

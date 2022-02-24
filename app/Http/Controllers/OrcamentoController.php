@@ -198,7 +198,7 @@ class OrcamentoController extends Controller
         }
         $string_orcdie = isset($orcdie)?implode("|", $orcdie):null;
         $string_dietas = implode("|",$dietas);
-        
+
         foreach($user->materiais as $material){
             $a = [
                 0 => $material->id,
@@ -236,7 +236,7 @@ class OrcamentoController extends Controller
         $string_orcdia = isset($orcdia)?implode("|", $orcdia):null;
         $string_diarias = implode("|",$diarias);
 
-        return view('orcamentos.edit',['orcamento' => $orcamento, 'string_orcequ' => $string_orcequ, 'string_equipes' => $string_equipes,'string_orcmed' => $string_orcmed, 'string_medicamentos' => $string_medicamentos,'string_orcdia' => $string_orcdia, 'string_diarias' => $string_diarias,'string_orcdie' => $string_orcdie, 'string_dietas' => $string_dietas,'string_orcequipa' => $string_orcequipa, 'string_equipamentos' => $string_equipamentos,'string_orcmat' => $string_orcmat, 'string_materiais' => $string_materiais]);
+        return view('orcamentos.edit',['user' => $user, 'orcamento' => $orcamento, 'string_orcequ' => $string_orcequ, 'string_equipes' => $string_equipes,'string_orcmed' => $string_orcmed, 'string_medicamentos' => $string_medicamentos,'string_orcdia' => $string_orcdia, 'string_diarias' => $string_diarias,'string_orcdie' => $string_orcdie, 'string_dietas' => $string_dietas,'string_orcequipa' => $string_orcequipa, 'string_equipamentos' => $string_equipamentos,'string_orcmat' => $string_orcmat, 'string_materiais' => $string_materiais]);
     }
 
     public function update(Request $request)

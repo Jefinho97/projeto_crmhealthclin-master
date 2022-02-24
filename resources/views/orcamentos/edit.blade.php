@@ -190,7 +190,7 @@ $(document).ready( function () {
                 text: 'Adicionar Profissional',
                 action: function (){
                     table_equipe.row.add([
-                        '<select name="equipes[]" id="equipes" class="form-control" ><option>----</option>@foreach($orcamento->equipes as $orcequ)<option value="{{ $orcequ->id }}">{{$orcequ->funcao}}</option>@endforeach</select>',
+                        '<select name="equipes[]" id="equipes" class="form-control" ><option>----</option>@foreach($user->equipes as $orcequ)<option value="{{ $orcequ->id }}">{{$orcequ->funcao}}</option>@endforeach</select>',
                         '<input type="number" class="form-control" name="quant_equ[]" id="quant_equ">',
                         '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delEquipe">Delete</button></div>'
                     ]).draw(false);
@@ -228,7 +228,7 @@ $(document).ready( function () {
                 text: 'Adicionar Medicamento',
                 action: function (){
                     table_medicamento.row.add([
-                        '<select name="medicamentos[]" id="medicamentos" class="form-control" ><option>----</option>@foreach($orcamento->medicamentos as $orcmed)<option value="{{$orcmed->id}}">{{$orcmed->nome}}</option>@endforeach</select>',
+                        '<select name="medicamentos[]" id="medicamentos" class="form-control" ><option>----</option>@foreach($user->medicamentos as $orcmed)<option value="{{$orcmed->id}}">{{$orcmed->nome}}</option>@endforeach</select>',
                         '<input type="number" class="form-control" name="quant_med[]" id="quant_med">',
                         '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delMedicamento">Delete</button></div>'
                     ]).draw(false);
@@ -266,7 +266,7 @@ $(document).ready( function () {
                 text: 'Adicionar Equipamento',
                 action: function (){
                     table_equipamento.row.add([
-                        '<select name="equipamentos[]" id="equipamentos" class="form-control" ><option>----</option>@foreach($orcamento->equipamentos as $orcequipa)<option value="{{$orcequipa->id}}">{{$orcequipa->nome}}</option>@endforeach</select>',
+                        '<select name="equipamentos[]" id="equipamentos" class="form-control" ><option>----</option>@foreach($user->equipamentos as $orcequipa)<option value="{{$orcequipa->id}}">{{$orcequipa->nome}}</option>@endforeach</select>',
                         '<input type="number" class="form-control" name="quant_equipa[]" id="quant_equipa">',
                         '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delEquipamento">Delete</button></div>'
                     ]).draw(false);
@@ -304,7 +304,7 @@ $(document).ready( function () {
                 text: 'Adicionar Dieta',
                 action: function (){
                     table_dieta.row.add([
-                        '<select name="dietas[]" id="dietas" class="form-control" ><option>----</option>@foreach($orcamento->dietas as $orcdie)<option value="{{$orcdie->id}}">{{$orcdie->nome}}</option>@endforeach</select>',
+                        '<select name="dietas[]" id="dietas" class="form-control" ><option>----</option>@foreach($user->dietas as $orcdie)<option value="{{$orcdie->id}}">{{$orcdie->nome}}</option>@endforeach</select>',
                         '<input type="number" class="form-control" name="quant_die[]" id="quant_die">',
                         '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delDieta">Delete</button></div>'
                     ]).draw(false);
@@ -342,7 +342,7 @@ $(document).ready( function () {
                 text: 'Adicionar Material',
                 action: function (){
                     table_material.row.add([
-                        '<select name="materiais[]" id="materiais" class="form-control" ><option>----</option>@foreach($orcamento->materiais as $orcmat)<option value="{{$orcmat->id}}">{{$orcmat->nome}}</option>@endforeach</select>',
+                        '<select name="materiais[]" id="materiais" class="form-control" ><option>----</option>@foreach($user->materiais as $orcmat)<option value="{{$orcmat->id}}">{{$orcmat->nome}}</option>@endforeach</select>',
                         '<input type="number" class="form-control" name="quant_mat[]" id="quant_mat">',
                         '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delMaterial">Delete</button></div>'
                     ]).draw();
@@ -380,7 +380,7 @@ $(document).ready( function () {
                 text: 'Adicionar Diaria',
                 action: function (){
                     table_diaria.row.add([
-                        '<select name="diarias[]" id="diarias" class="form-control" ><option>----</option>@foreach($orcamento->diarias as $orcdia)<option value="{{$orcdia->id}}">{{$orcdia->nome}}</option>@endforeach</select>',
+                        '<select name="diarias[]" id="diarias" class="form-control" ><option>----</option>@foreach($user->diarias as $orcdia)<option value="{{$orcdia->id}}">{{$orcdia->nome}}</option>@endforeach</select>',
                         '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delDiaria">Delete</button></div>'
                     ]).draw(false);
                 },
@@ -413,7 +413,7 @@ $(document).ready( function () {
                     html,
                     '<input type="number" class="form-control" name="quant_equ[]" id="quant_equ" value="'+a[1]+'">',
                     '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delEquipe">Delete</button></div>'
-                ]).draw();
+                ]).draw(false);
             }
         }
 
@@ -432,7 +432,7 @@ $(document).ready( function () {
                     html,
                     '<input type="number" class="form-control" name="quant_med[]" id="quant_med" value="'+a[1]+'">',
                     '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delMedicamento">Delete</button></div>'
-                ]).draw();
+                ]).draw(false);
             }
         }
 

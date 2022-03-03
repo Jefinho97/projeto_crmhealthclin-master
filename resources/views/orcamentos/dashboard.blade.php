@@ -77,7 +77,7 @@ $(function(){
         ajax: "{{ route('orcamentos.dashboard') }}",
         columns: [
             {data: 'formData', name: 'formData'},
-            {data: 'procedimento', name: 'procedimento'},
+            {data: 'formProcedimento', name: 'formProcedimento'},
             {data: 'formStatus', name: 'formStatus'},
             {data: 'formRazao', name: 'formRazao'},
             {data: 'action', name: 'action', orderable: false, searchable: false},

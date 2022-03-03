@@ -12,10 +12,13 @@
             <input type="text" class="form-control show" id="procedimento" name="procedimento" value="{{ $orcamento->procedimento }}" readonly>
         </div>
         <div class="form-group">
-            <label for="date">Data do Procedimento:</label>
-            <input type="date" class="form-control" id="data" name="data" value="{{ $orcamento->data->format('Y-m-d') }}" readonly>
+            <label for="title">Data do Procedimento:</label>
+            <input type="text" class="form-control" id="data" name="data" value="{{ date('d/m/y', strtotime($orcamento->data)) }}" readonly>
         </div>
-        
+        <div class="form-group">
+            <label for="title">Solicitante:</label>
+            <input type="text" class="form-control" id="solicitante" name="solicitante" value="{{ $orcamento->solicitante }}" readonly>
+        </div>
         <label for="title">Informações do Paciente {{ $orcamento->paciente}}:</label>
         <div class="form-group">
             <input type="text" class="form-control" id="paciente" name="paciente" value="{{ $orcamento->paciente }}" readonly>
@@ -36,7 +39,7 @@
             <input type="text" class="form-control" id="medico" name="medico" value="{{ $orcamento->medico }}" readonly>
             <input type="number" class="form-control" id="preco_medico" name="preco_medico" value="{{ $orcamento->preco_medico }}" readonly>
         </div>
-        
+        @if(count($orcamento->equipes) > 0)
         <div class="form-group">
             <table class="table table-striped table-bordered">
                 <thead>
@@ -72,8 +75,9 @@
             </table>
         </div>
         @endif
+        @endif
 
-        @if(is_array($materiais))
+        @if(count($orcamento->materiais) > 0)
         <div class="form-group">
             <table class="table table-striped table-bordered">
                 <thead>
@@ -87,8 +91,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($materiais as $material)
-                    @if($material->tipo === "material")
+                    @foreach($orcamento->materiais as $material)
                     <tr>
                         <td scope="row">{{ $material->nome }}</td>
                         <td>{{ $material->pivot->quant }}</td>
@@ -97,7 +100,6 @@
                         <td>{{ $material->venda }}</td>
                         <td>{{ $material->pivot->soma_venda }}</td>
                     </tr>
-                    @endif
                     @endforeach
                     <tr>
                         <td scope="row">Total</td>
@@ -112,7 +114,7 @@
         </div>
         @endif
 
-        @if(is_array($medicamentos))
+        @if(count($orcamento->medicamentos) > 0)
         <div class="form-group">
             <table class="table table-striped table-bordered">
                 <thead>
@@ -126,8 +128,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($medicamentos as $medicamento)
-                    @if($medicamento->tipo === "medicamento")
+                    @foreach($orcamento->medicamentos as $medicamento)
                     <tr>
                         <td scope="row">{{ $medicamento->nome }}</td>
                         <td>{{ $medicamento->pivot->quant }}</td>
@@ -136,7 +137,6 @@
                         <td>{{ $medicamento->venda }}</td>
                         <td>{{ $medicamento->pivot->soma_venda }}</td>
                     </tr>
-                    @endif
                     @endforeach
                     <tr>
                         <td scope="row">Total</td>
@@ -151,7 +151,7 @@
         </div>
         @endif
 
-        @if(is_array($dietas))
+        @if(count($orcamento->dietas) > 0)
         <div class="form-group">
             <table class="table table-striped table-bordered">
                 <thead>
@@ -165,8 +165,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($dietas as $dieta)
-                    @if($dieta === "dieta")
+                    @foreach($orcamento->dietas as $dieta)
                     <tr>
                         <td scope="row">{{ $dieta->nome }}</td>
                         <td>{{ $dieta->pivot->quant }}</td>
@@ -175,7 +174,6 @@
                         <td>{{ $dieta->venda }}</td>
                         <td>{{ $dieta->pivot->soma_venda }}</td>
                     </tr>
-                    @endif
                     @endforeach
                     <tr>
                         <td scope="row">Total</td>
@@ -190,7 +188,7 @@
         </div>
         @endif
 
-        @if(is_array($equipamentos))
+        @if(count($orcamento->equipamentos) > 0)
         <div class="form-group">
             <table class="table table-striped table-bordered">
                 <thead>
@@ -204,8 +202,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($equipamentos as $equipamento)
-                    @if($equipamento->tipo === "equipamento")
+                    @foreach($orcamento->equipamentos as $equipamento)
                     <tr>
                         <td scope="row">{{ $equipamento->nome }}</td>
                         <td>{{ $equipamento->pivot->quant }}</td>
@@ -214,7 +211,6 @@
                         <td>{{ $equipamento->venda }}</td>
                         <td>{{ $equipamento->pivot->soma_venda }}</td>
                     </tr>
-                    @endif
                     @endforeach
                     <tr>
                         <td scope="row">Total</td>
@@ -229,7 +225,7 @@
         </div>
         @endif
 
-        @if(is_array($orcamento->diarias))
+        @if(count($orcamento->diarias) > 0)
         <div class="form-group">
             <label for="title">Diarias</label>
             <table class="table table-striped table-bordered">
@@ -282,15 +278,11 @@
                         <td scope="row">Valor Inicial</td>
                         <td>{{ $orcamento->valor_inicial }}</td>
                     </tr>
-                    <form action="{{ route('orcamentos.up_show', [$orcamento->id]) }}" method="POST">
-                        @csrf
-                        @method('PUT') 
                         <input type="hidden" name="valor_inicial" value="{{ $orcamento->valor_inicial }}">
                     <tr>
                         <td scope="row">Total</td>
                         <td><input type="number" class="form-control" id="desconto" name="desconto" value="{{ $orcamento->desconto }}"></td>
                     </tr>
-                    <form>
                     <tr>
                         <td scope="row">Total</td>
                         <td>{{ $orcamento->valor_final }}</td>
@@ -299,4 +291,31 @@
             </table>
         </div>
 </div>
+<script>
+toastr.options.preventDuplicates = true;
+
+$(document).ready( function () {
+    $.ajaxSetup({
+        headers:{
+            'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    $('#desconto').on('change',function() {
+        $.ajax({
+            data: { desconto : $(this).val()},
+            url: "{{route('orcamentos.up_show',[$orcamento->id])}}",
+            type:"PUT",
+            success: function(){
+                table.draw();
+                toastr.success('Desconto aplicado com sucesso!');
+                $('#modal').modal('hide');
+            },
+            error: function(){
+                toastr.error('Algo deu errado, ERRO!');
+                $('#modal').modal('hide');
+            }
+        });
+    });
+});
+</script>
 @endsection

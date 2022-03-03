@@ -37,7 +37,8 @@ Route::middleware('auth')->group(function() {
         Route::put('update/{id}', [OrcamentoController::class, 'update'])->name('update');
         Route::put('status/{id}', [OrcamentoController::class, 'status'])->name('status');
         Route::put('razao_status/{id}', [OrcamentoController::class, 'razao_status'])->name('razao_status');
-        Route::put('up_show/{id}', [OrcamentoController::class, 'up_show'])->name('up_show');
+        Route::get('show/{id}', [OrcamentoController::class, 'show'])->name('show');
+        Route::put('up_show/{id}',[OrcamentoController::class, 'up_show'])->name('up_show');
 
     });
 

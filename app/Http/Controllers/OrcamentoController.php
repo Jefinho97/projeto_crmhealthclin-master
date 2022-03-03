@@ -49,6 +49,10 @@ class OrcamentoController extends Controller
 
                     return $btn;
                 })
+                ->addColumn('formProcedimento', function ($row) {
+                    $btn = '<a href="./show/' . $row->id . ' class="btn btn-light" style="color: inherit;">'. $row->procedimento . '</a>';
+                    return $btn;
+                })
                 ->addColumn('formStatus', function ($row) {
                     $btn = '<select name="status" id="status" data-id="./status/' . $row->id . '" class="form-control">   <option value="----">----</option><option value="novo" ' . ($row->status === "novo" ? "selected" : "") . '>Novo</option>  <option value="aguardando" ' . ($row->status === "aguardando" ? "selected" : "") . '>Aguardando</option> <option value="em andamento" ' . ($row->status === "em andamento" ? "selected" : "") . '>Em andamento</option> <option value="cancelado" ' . ($row->status === "cancelado" ? "selected" : "") . '>Cancelado</option> <option value="ganho" ' . ($row->status === "ganho" ? "selected" : "") . '>Ganho</option> <option value="perdido" ' . ($row->status === "perdido" ? "selected" : "") . '>Perdido</option> <option value="desistencia" ' . ($row->status === "desistencia" ? "selected" : "") . '>Desistencia</option>    </select>';
                     return $btn;
@@ -59,13 +63,13 @@ class OrcamentoController extends Controller
                 })
                 ->addColumn('action', function ($row) {
 
-                    $btn = '<div style="text-align: center;"><a href="./edit/' . $row->id . '" class="btn btn-sm btn-info edit-btn "> Editar </a>';
+                    $btn = '<div style="text-align: center;"><a href="./edit/' . $row->id . '" class="btn btn-sm btn-info"> Editar </a>';
 
                     $btn = $btn . ' <button class="btn btn-sm btn-danger" data-id="./' . $row->id . '" id="destroy">Delete</button> </div>';
 
                     return $btn;
                 })
-                ->rawColumns(['action', 'formData', 'formStatus', 'formRazao'])
+                ->rawColumns(['action', 'formData', 'formProcedimento', 'formStatus', 'formRazao'])
                 ->make(true);
         }
 
@@ -397,7 +401,7 @@ class OrcamentoController extends Controller
             'procedimento' => $request->procedimento, 'solicitante' => $request->solicitante, 'paciente' => $request->paciente,
             'email_pac' => $request->email_pac, 'telefone_1' => $request->telefone_1, 'telefone_2' => $request->telefone_2,
             'termos_condicoes' => $request->termos_condicoes, 'convenios' => $request->convenios,
-            'condicoes_pag' => $request->condicoes_pag, 'data' => $request->data
+            'condicoes_pag' => $request->condicoes_pag, 'data' => $request->data,
         ]);
 
         return redirect()->route('orcamentos.dashboard')->with('msg', 'Orçamentos   editado com sucesso!');
@@ -408,34 +412,8 @@ class OrcamentoController extends Controller
     public function show($id)
     {
         $orcamento = Orcamento::findOrFail($id);
-        $user = auth()->user();
-
-        if ($user->id == $orcamento->user_id) {
-            $materiais = null;
-            $medicamentos = null;
-            $dietas = null;
-            $equipamentos = null;
-            foreach ($orcamento->materials as $material) {
-                switch ($material->tipo) {
-                    case "material":
-                        $materiais[] = $material;
-                        break;
-                    case "medicamento":
-                        $medicamentos[] = $material;
-                        break;
-                    case "dieta":
-                        $dietas[] = $material;
-                        break;
-                    case "equipamento":
-                        $equipamentos[] = $material;
-                        break;
-                }
-            }
-
-            return view('orcamentos.show', ['orcamento' => $orcamento, 'materiais' => $materiais, 'dietas' => $dietas, 'medicamentos' => $medicamentos, 'equipamentos' => $equipamentos]);
-        } else {
-            return redirect()->route('index');
-        }
+        
+        return view('orcamentos.show', ['orcamento' => $orcamento]);
     }
 
     public function gerarpdf($id)
@@ -447,9 +425,9 @@ class OrcamentoController extends Controller
 
     public function up_show(Request $request)
     {
-        Orcamento::findOrFail($request->id)->update(['desconto' => $request->desconto, 'valor_final' => ($request->valor_inicial - $request->desconto)]);
+        Orcamento::findOrFail($request->id)->update(['desconto' => $request->desconto, 'valor_final' => ($request->valor_final - $request->desconto)]);
 
-        return redirect()->route('orcamentos.up_show', ['id' => $request->id])->with('msg', 'Desconto atualizado com sucesso!');
+        return;
     }
 
     public function status(Request $request)

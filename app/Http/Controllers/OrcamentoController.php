@@ -425,7 +425,7 @@ class OrcamentoController extends Controller
 
     public function up_show(Request $request)
     {
-        Orcamento::findOrFail($request->id)->update(['desconto' => $request->desconto, 'valor_final' => ($request->valor_final - $request->desconto)]);
+        Orcamento::findOrFail($request->id)->update(['desconto' => $request->desconto]);
 
         return;
     }

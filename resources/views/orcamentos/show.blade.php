@@ -6,45 +6,66 @@
 
 <div id="event-create-container" class="col-md-6 offset-md-3">
     <h1>Orçamento</h1>
-
-        <div class="form-group">
-            <label for="title">Procedimento:</label>
-            <input type="text" class="form-control show" id="procedimento" name="procedimento" value="{{ $orcamento->procedimento }}" readonly>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="form-group col-sm">
+                <label for="title">Status</label>
+                <select name="status" id="status" class="form-control">   <option value="----">----</option><option value="novo" {{ ($orcamento->status === "novo" ? "selected" : "") }}>Novo</option>  <option value="aguardando" {{($orcamento->status === "aguardando" ? "selected" : "")}}>Aguardando</option> <option value="em andamento" {{($orcamento->status === "em andamento" ? "selected" : "")}}>Em andamento</option> <option value="cancelado" {{($orcamento->status === "cancelado" ? "selected" : "")}}>Cancelado</option> <option value="ganho" {{($orcamento->status === "ganho" ? "selected" : "")}}>Ganho</option> <option value="perdido" {{($orcamento->status === "perdido" ? "selected" : "")}}>Perdido</option> <option value="desistencia" {{($orcamento->status === "desistencia" ? "selected" : "")}}>Desistencia</option>    </select>
+            </div>
+            <div class="form-group col-sm">
+                <label for="title">Razão Status</label>
+                <select name="razao_status" id="razao_status" data-id="./razao_status/{{$orcamento->id}}" class="form-control"> <option value="----">----</option>  <option value="na fila" {{($orcamento->razao_status === "na fila" ? "selected" : "")}}>Na fila para atendimento</option> <option value="aguardando cliente" {{($orcamento->razao_status === "aguardando cliente" ? "selected" : "")}}>Aguardando cliente</option>  <option value="aguardando envio" {{($orcamento->razao_status === "aguardando envio" ? "selected" : "")}}>Aguardando envio do cirurgião</option>  </select>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="title">Data do Procedimento:</label>
-            <input type="text" class="form-control" id="data" name="data" value="{{ date('d/m/y', strtotime($orcamento->data)) }}" readonly>
-        </div>
-        <div class="form-group">
-            <label for="title">Solicitante:</label>
-            <input type="text" class="form-control" id="solicitante" name="solicitante" value="{{ $orcamento->solicitante }}" readonly>
+        <div class="row">
+            <div class="form-group col-sm">
+                <label for="title">Procedimento:</label>
+                <input type="text" class="form-control show" id="procedimento" name="procedimento" value="{{ $orcamento->procedimento }}" readonly>
+            </div>
+            <div class="form-group col-sm">
+                <label for="title">Data do Procedimento:</label>
+                <input type="text" class="form-control" id="data" name="data" value="{{ date('d/m/y', strtotime($orcamento->data)) }}" readonly>
+            </div>
+            <div class="form-group col-sm">
+                <label for="title">Solicitante:</label>
+                <input type="text" class="form-control" id="solicitante" name="solicitante" value="{{ $orcamento->solicitante }}" readonly>
+            </div>
         </div>
         <label for="title">Informações do Paciente {{ $orcamento->paciente}}:</label>
-        <div class="form-group">
-            <input type="text" class="form-control" id="paciente" name="paciente" value="{{ $orcamento->paciente }}" readonly>
+        <div class="row">
+            <div class="form-group col-sm">
+                <input type="text" class="form-control" id="paciente" name="paciente" value="{{ $orcamento->paciente }}" readonly>
+            </div>
+            <div class="form-group col-sm">
+                <input type="email" class="form-control" id="email_pac" name="email_pac" value="{{ $orcamento->email_pac}}" readonly>
+            </div>
         </div>
-        <div class="form-group">
-            <input type="email" class="form-control" id="email_pac" name="email_pac" value="{{ $orcamento->email_pac}}" readonly>
-        </div>
-        <div class="form-group">    
-            <input type="tel" class="form-control" id="telefone_1" name="telefone_1" value="{{ $orcamento->telefone_1 }}" readonly>
-        </div>
-        <div class="form-group">    
-            <input type="tel" class="form-control" id="telefone_2" name="telefone_2" value="{{ $orcamento->telefone_2 }}"readonly>
-        </div>
-
+        <div class="row">
+            <div class="form-group col-sm">    
+                <input type="tel" class="form-control" id="telefone_1" name="telefone_1" value="{{ $orcamento->telefone_1 }}" readonly>
+            </div>
+            <div class="form-group col-sm">    
+                <input type="tel" class="form-control" id="telefone_2" name="telefone_2" value="{{ $orcamento->telefone_2 }}"readonly>
+            </div>
+        </div>      
         @if($orcamento->tipo == true)
-        <div class="form-group">
+        <div class="row">
+            <div class="form-group col-sm">
             <label for="title">Medico:</label>
             <input type="text" class="form-control" id="medico" name="medico" value="{{ $orcamento->medico }}" readonly>
+            </div>
+            <div class="form-group col-sm">
+            <label for= title>Valor</label>
             <input type="number" class="form-control" id="preco_medico" name="preco_medico" value="{{ $orcamento->preco_medico }}" readonly>
+            </div>
         </div>
+
         @if(count($orcamento->equipes) > 0)
         <div class="form-group">
             <table class="table table-striped table-bordered">
                 <thead>
                     <tr>
-                        <th scope="col">Honorarios</th>
+                        <th scope="col">Honorarios da Equipe</th>
                         <th scope="col">Quant</th>
                         <th scope="col">Custo</th>
                         <th scope="col">Custo Total</th>
@@ -227,11 +248,10 @@
 
         @if(count($orcamento->diarias) > 0)
         <div class="form-group">
-            <label for="title">Diarias</label>
             <table class="table table-striped table-bordered">
                 <thead>
                     <tr>
-                        <th scope="col">Descrição</th>
+                        <th scope="col">Diarias</th>
                         <th scope="col">Valor Base</th>
                         <th scope="col">Adicional</th>
                         <th scope="col">Valor Unitario Venda</th>
@@ -256,40 +276,40 @@
             </table>
         </div>
         @endif
-        
-        <div class="form-group">
-            <label for="title">Termos e condições:</label>
-            <textarea name="termos_condicoes" id="termos_condicoes" class="form-control" readonly>{{ $orcamento->termos_condicoes }}</textarea>    
+        <div class="row">
+            <div class="form-group col-sm">
+                <label for="title">Termos e condições:</label>
+                <textarea name="termos_condicoes" id="termos_condicoes" class="form-control" readonly>{{ $orcamento->termos_condicoes }}</textarea>    
+            </div>
+            <div class="form-group col-sm">
+                <label for="title">Convenios:</label>
+                <textarea name="convenios" id="convenios" class="form-control" readonly>{{ $orcamento->convenios }}</textarea>    
+            </div>
+            <div class="form-group col-sm">
+                <label for="title">Condições de pagamento:</label>
+                <textarea name="condicoes_pag" id="condicoes_pag" class="form-control" readonly>{{ $orcamento->condicoes_pag }}</textarea>    
+            </div>
         </div>
-        <div class="form-group">
-            <label for="title">Convenios:</label>
-            <textarea name="convenios" id="convenios" class="form-control" readonly>{{ $orcamento->convenios }}</textarea>    
-        </div>
-        <div class="form-group">
-            <label for="title">Condições de pagamento:</label>
-            <textarea name="condicoes_pag" id="condicoes_pag" class="form-control" readonly>{{ $orcamento->condicoes_pag }}</textarea>    
-        </div>
-        
         <div class="form-group">
             <label for="title">Total</label>
             <table class="table table-striped table-bordered">
                 <tbody>
                     <tr>
-                        <td scope="row">Valor Inicial</td>
-                        <td>{{ $orcamento->valor_inicial }}</td>
+                        <td scope="row">Valor</td>
+                        <td>{{ $orcamento->valor_final }}</td>
                     </tr>
-                        <input type="hidden" name="valor_inicial" value="{{ $orcamento->valor_inicial }}">
                     <tr>
-                        <td scope="row">Total</td>
+                        <td scope="row">Desconto</td>
                         <td><input type="number" class="form-control" id="desconto" name="desconto" value="{{ $orcamento->desconto }}"></td>
                     </tr>
                     <tr>
                         <td scope="row">Total</td>
-                        <td>{{ $orcamento->valor_final }}</td>
+                        <td>{{ $orcamento->valor_final - $orcamento->desconto }}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
+    </div>
 </div>
 <script>
 toastr.options.preventDuplicates = true;
@@ -306,13 +326,40 @@ $(document).ready( function () {
             url: "{{route('orcamentos.up_show',[$orcamento->id])}}",
             type:"PUT",
             success: function(){
-                table.draw();
+                location.reload()
                 toastr.success('Desconto aplicado com sucesso!');
                 $('#modal').modal('hide');
+                
             },
             error: function(){
                 toastr.error('Algo deu errado, ERRO!');
                 $('#modal').modal('hide');
+            }
+        });
+    });
+    $('#status').on('change', function(){
+        $.ajax({
+            url: "{{route('orcamentos.status',[$orcamento->id])}}", 
+            data: {status : $(this).val()},
+            type: "PUT",
+            success: function(){
+                toastr.success('Status alterado com sucesso!');
+            },
+            error: function(){
+                toastr.error('Algo deu errado, ERRO!');
+            }
+        });
+    });
+    $('#razao_status').on('change',function(){
+        $.ajax({
+            url: "{{route('orcamentos.razao_status',[$orcamento->id])}}", 
+            data: {razao_status: $(this).val()},
+            type: "PUT",
+            success: function(){
+                toastr.success('Razão alterada com sucesso!');
+            },
+            error: function(){
+                toastr.error('Algo deu errado, ERRO!');
             }
         });
     });

@@ -29,8 +29,9 @@ class OrcamentoController extends Controller
     {
 
         if (Auth::check()) {
-
+           
             return redirect()->route('orcamentos.dashboard');
+        
         }
 
         return view('auth.login');
@@ -40,7 +41,27 @@ class OrcamentoController extends Controller
     {
         $user = Auth::user();
         $orcamentos = $user->orcamentos;
-
+        foreach($orcamentos as $orcamento){
+            $solicitados = 0;
+            $fechados = 0;
+            $perdidos = 0;
+            $abertos = 0;
+            switch ($orcamento->status){
+                case 'solicitado':
+                    $solicitados++;
+                    break;
+                case 'fechado':
+                    $fechados++;
+                    break;
+                case 'perdido':
+                    $perdidos++;
+                    break;
+                case 'aberto':
+                    $abertos++;
+                    break;
+            }
+            
+        };
         if ($request->ajax()) {
             return Datatables::of($orcamentos)
                 ->addIndexColumn()
@@ -54,7 +75,7 @@ class OrcamentoController extends Controller
                     return $btn;
                 })
                 ->addColumn('formStatus', function ($row) {
-                    $btn = '<select name="status" id="status" data-id="./status/' . $row->id . '" class="form-control">   <option value="----">----</option><option value="novo" ' . ($row->status === "novo" ? "selected" : "") . '>Novo</option>  <option value="aguardando" ' . ($row->status === "aguardando" ? "selected" : "") . '>Aguardando</option> <option value="em andamento" ' . ($row->status === "em andamento" ? "selected" : "") . '>Em andamento</option> <option value="cancelado" ' . ($row->status === "cancelado" ? "selected" : "") . '>Cancelado</option> <option value="ganho" ' . ($row->status === "ganho" ? "selected" : "") . '>Ganho</option> <option value="perdido" ' . ($row->status === "perdido" ? "selected" : "") . '>Perdido</option> <option value="desistencia" ' . ($row->status === "desistencia" ? "selected" : "") . '>Desistencia</option>    </select>';
+                    $btn = '<select name="status" id="status" data-id="./status/' . $row->id . '" class="form-control">   <option value="----">----</option><option value="solicitado" ' . ($row->status === "solicitado" ? "selected" : "") . '>Solicitado</option>  <option value="fechado" ' . ($row->status === "fechado" ? "selected" : "") . '>Fechado</option> <option value="perdido" ' . ($row->status === "perdido" ? "selected" : "") . '>Perdido</option> <option value="aberto" ' . ($row->status === "aberto" ? "selected" : "") . '>Aberto</option> </select>';
                     return $btn;
                 })
                 ->addColumn('formRazao', function ($row) {
@@ -73,7 +94,7 @@ class OrcamentoController extends Controller
                 ->make(true);
         }
 
-        return view('orcamentos.dashboard', compact('orcamentos'));
+        return view('orcamentos.dashboard', compact('orcamentos'),[ 'solicitados' => $solicitados, 'fechados' => $fechados, 'perdidos' => $perdidos, 'abertos' => $abertos]);
     }
 
     // Criar Orçamento

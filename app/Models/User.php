@@ -82,4 +82,7 @@ class User extends Authenticatable
     public function medicamentos() {
         return $this->hasMany('App\Models\Medicamento');
     } 
+    public function medicos() {
+        return $this->hasMany('App\Models\Medico');
+    }
 }

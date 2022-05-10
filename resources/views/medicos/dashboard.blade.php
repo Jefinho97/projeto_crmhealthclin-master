@@ -6,16 +6,15 @@
 
 
 <div class="col-md-10 offset-md-1 dashboard-title-container">
-<h1>Medicamentos Cadastrados</h1>  <button type="button" class="btn btn-success" id="add" style="float:right"> Cadastrar medicamento</button>
+<h1>Medicos Cadastrados</h1>  <button type="button" class="btn btn-success" id="add" style="float:right"> Cadastrar medico</button>
 </div>
 <div class="col-md-10 offset-md-1 dashboard-events-container">
     <table class="table table-hover data-table">   
         <thead>
             <tr>
-                <th scope="col">Medicamento</th>
-                <th scope="col">Unidade de medida</th>
-                <th scope="col">Custo</th>
-                <th scope="col">Preço Venda</th>
+                <th scope="col">Medico</th>
+                <th scope="col">CRM</th>
+                <th scope="col">UF</th>
                 <th scope="col"style="text-align: center;" >Ações</th>
             </tr>
         </thead>
@@ -33,27 +32,23 @@
                 </button>
             </div>
             <form  id="form" name="form">
-                <input type="hidden" id="medicamento_id" name="medicamento_id">            
+                <input type="hidden" id="medico_id" name="medico_id">            
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="title">Medicamento:</label>
+                        <label for="title">Medico:</label>
                         <input type="text" class="form-control" id="nome" name="nome">
                     </div>
                     <div class="form-group">
-                        <label for="title">Unidade de Medida:</label>
-                        <input type="text" class="form-control" id="uni_medida" name="uni_medida">
+                        <label for="title">CRM:</label>
+                        <input type="number" class="form-control" id="crm" name="crm">
                     </div>
                     <div class="form-group">
-                        <label for="title">Custo:</label>
-                        <input type="number" step=".01" min="0" class="form-control" id="custo" name="custo">
-                    </div>
-                    <div class="form-group">
-                        <label for="title">Preço Venda:</label>
-                        <input type="number" step=".01" min="0" class="form-control" id="venda" name="venda">
+                        <label for="title">UF:</label>
+                        <input type="text" class="form-control" id="uf" name="uf">
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="save">Salvar Equipamento</button>
+                    <button type="button" class="btn btn-primary" id="save">Salvar Medico</button>
                 </div>
             </form>
         </div>
@@ -70,12 +65,11 @@ $(function(){
     var table = $('.data-table').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('medicamentos.dashboard') }}",
+            ajax: "{{ route('medicos.dashboard') }}",
             columns: [
                 {data: 'nome', name: 'nome'},
-                {data: 'uni_medida', name: 'uni_medida'},
-                {data: 'custo', name: 'custo'},
-                {data: 'venda', name: 'venda'},
+                {data: 'crm', name: 'crm'},
+                {data: 'uf', name: 'uf'},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
             ],
             "language": {
@@ -96,8 +90,8 @@ $(function(){
         });
 
     $('#add').click( function(){
-        $('#medicamento_id').val();
-        $('#titulo').html("Cadastrar Novo Medicamento");
+        $('#medico_id').val();
+        $('#titulo').html("Cadastrar Novo Medico");
         $('#form').trigger('reset');
         $('#modal').modal('show')
     });
@@ -107,12 +101,11 @@ $(function(){
         
         $.get(url, function(data){
             $('#modal').modal('show');
-            $('#titulo').html("Atualizar medicamento");
-            $('#medicamento_id').val(data.id);
+            $('#titulo').html("Atualizar função");
+            $('#medico_id').val(data.id);
             $('#nome').val(data.nome);
-            $('#uni_medida').val(data.uni_medida)
-            $('#custo').val(data.custo);
-            $('#venda').val(data.venda);
+            $('#crm').val(data.crm);
+            $('#uf').val(data.uf);
         });
         
     });
@@ -120,11 +113,11 @@ $(function(){
         
         $.ajax({
             data: $("#form").serialize(),
-            url: "{{route('medicamentos.store')}}",
+            url: "{{route('medicos.store')}}",
             type:"POST",
             success: function(){
                 table.draw();
-                toastr.success('Medicamento criado com sucesso!');
+                toastr.success('Medico adicionado com sucesso!');
                 $('#modal').modal('hide');
             },
             error: function(){
@@ -136,8 +129,8 @@ $(function(){
     $(document).on('click','#destroy', function(){
         var url = $(this).data('id');
         swal.fire({
-                title:'Excluir Medicamento?',
-                html:'Tem certeza que quer <b>deletar</b> o medicamento',
+                title:'Excluir Medico?',
+                html:'Tem certeza que quer <b>deletar</b> o medico',
                 showCancelButton:true,
                 showCloseButton:true,
                 cancelButtonText:'Cancelar',
@@ -153,7 +146,7 @@ $(function(){
                     type: "DELETE",
                     success: function(){
                         table.draw();
-                        toastr.success('Medicamento deletada com sucesso!');
+                        toastr.success('Medico deletada com sucesso!');
                     },
                     error: function(){
                         toastr.error('Algo deu errado, ERRO!');

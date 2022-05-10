@@ -4,9 +4,26 @@
 
 @section('content')
 
+<div class="container overflow-hidden col-md-10 offset-md-1" style="padding-top: 20px;">
+    <div class="row gx-5">
+        <div class="col">
+            <div class="p-3 border bg-light">Solicitados: {{$solicitados}}</div>
+        </div>
+        <div class="col">
+            <div class="p-3 border bg-light">Fechados: {{$fechados}}</div>
+        </div>
+        <div class="col">
+            <div class="p-3 border bg-light">Perdidos: {{$perdidos}}</div>
+        </div>
+        <div class="col">
+            <div class="p-3 border bg-light">Abertos: {{$abertos}}</div>
+        </div>
+    </div>
+</div>
 
 <div class="col-md-10 offset-md-1 dashboard-title-container">
-<h1>Orçamentos Cadastrados</h1><button type="button" class="btn btn-success" id="add" style="float:right"> criar orçamento</button>
+<h1>Orçamentos Cadastrados</h1>
+<button type="button" class="btn btn-success" id="add" style="float:right"> criar orçamento</button>
 </div>
 <div class="col-md-10 offset-md-1 dashboard-events-container">
     <table class="table table-hover data-table">   

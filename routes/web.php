@@ -19,6 +19,7 @@ use App\Http\Controllers\EquipamentoController;
 use App\Http\Controllers\EquipeController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\MedicamentoController;
+use App\Http\Controllers\MedicoController;
 
 /** Rotas Orçamento */
 
@@ -103,6 +104,17 @@ Route::middleware('auth')->group(function() {
         Route::delete('{id}', [MedicamentoController::class, 'destroy'])->name('destroy');
         Route::get('dashboard', [MedicamentoController::class, 'dashboard'])->name('dashboard');
         Route::get('{id}', [MedicamentoController::class, 'edit'])->name('edit');
+        
+    });
+
+    /** Rotas Medicos */
+
+    Route::prefix('medicos')->name('medicos.')->group( function(){
+
+        Route::post('', [MedicoController::class, 'store'])->name('store');
+        Route::delete('{id}', [MedicoController::class, 'destroy'])->name('destroy');
+        Route::get('dashboard', [MedicoController::class, 'dashboard'])->name('dashboard');
+        Route::get('{id}', [MedicoController::class, 'edit'])->name('edit');
         
     });
 });

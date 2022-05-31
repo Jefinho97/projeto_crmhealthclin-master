@@ -17,7 +17,7 @@
         
  
         <!-- CSS da aplicação -->
-        <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+        <link rel="stylesheet" href="/css/styles.css">
         
         <script src="{{ asset('jquery/jquery-3.6.0.min.js') }}"></script>
         

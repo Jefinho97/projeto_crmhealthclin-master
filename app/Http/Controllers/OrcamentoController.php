@@ -29,7 +29,7 @@ class OrcamentoController extends Controller
     {
 
         if (Auth::check()) {
-           
+            
             return redirect()->route('orcamentos.dashboard');
         
         }
@@ -41,11 +41,11 @@ class OrcamentoController extends Controller
     {
         $user = Auth::user();
         $orcamentos = $user->orcamentos;
+        $solicitados = 0;
+        $fechados = 0;
+        $perdidos = 0;
+        $abertos = 0;
         foreach($orcamentos as $orcamento){
-            $solicitados = 0;
-            $fechados = 0;
-            $perdidos = 0;
-            $abertos = 0;
             switch ($orcamento->status){
                 case 'solicitado':
                     $solicitados++;
@@ -60,7 +60,7 @@ class OrcamentoController extends Controller
                     $abertos++;
                     break;
             }
-            
+                
         };
         if ($request->ajax()) {
             return Datatables::of($orcamentos)
@@ -74,14 +74,6 @@ class OrcamentoController extends Controller
                     $btn = '<a href="./show/' . $row->id . ' class="btn btn-light" style="color: inherit;">'. $row->procedimento . '</a>';
                     return $btn;
                 })
-                ->addColumn('formStatus', function ($row) {
-                    $btn = '<select name="status" id="status" data-id="./status/' . $row->id . '" class="form-control">   <option value="----">----</option><option value="solicitado" ' . ($row->status === "solicitado" ? "selected" : "") . '>Solicitado</option>  <option value="fechado" ' . ($row->status === "fechado" ? "selected" : "") . '>Fechado</option> <option value="perdido" ' . ($row->status === "perdido" ? "selected" : "") . '>Perdido</option> <option value="aberto" ' . ($row->status === "aberto" ? "selected" : "") . '>Aberto</option> </select>';
-                    return $btn;
-                })
-                ->addColumn('formRazao', function ($row) {
-                    $btn = '<select name="razao_status" id="razao_status" data-id="./razao_status/' . $row->id . '" class="form-control"> <option value="----">----</option>  <option value="na fila" ' . ($row->razao_status === "na fila" ? "selected" : "") . '>Na fila para atendimento</option> <option value="aguardando cliente" ' . ($row->razao_status === "aguardando cliente" ? "selected" : "") . '>Aguardando cliente</option>  <option value="aguardando envio" ' . ($row->razao_status === "aguardando envio" ? "selected" : "") . '>Aguardando envio do cirurgião</option>  </select>';
-                    return $btn;
-                })
                 ->addColumn('action', function ($row) {
 
                     $btn = '<div style="text-align: center;"><a href="./edit/' . $row->id . '" class="btn btn-sm btn-info"> Editar </a>';
@@ -90,11 +82,11 @@ class OrcamentoController extends Controller
 
                     return $btn;
                 })
-                ->rawColumns(['action', 'formData', 'formProcedimento', 'formStatus', 'formRazao'])
+                ->rawColumns(['action', 'formData', 'formProcedimento'])
                 ->make(true);
         }
 
-        return view('orcamentos.dashboard', compact('orcamentos'),[ 'solicitados' => $solicitados, 'fechados' => $fechados, 'perdidos' => $perdidos, 'abertos' => $abertos]);
+        return view('orcamentos.dashboard', [compact('orcamentos'), 'solicitados' => $solicitados, 'fechados' => $fechados, 'perdidos' => $perdidos, 'abertos' => $abertos]);
     }
 
     // Criar Orçamento
@@ -271,6 +263,8 @@ class OrcamentoController extends Controller
         // update tipo, medico, equipe
         if ($request->tipo == true) {
             $orcamento->equipes()->detach();
+            $orcamento->medicos()->detach();
+            $orcamento->medicos()->attach($request->medico->id);
             $equipes = $request->equipes;
             $quant = (is_array($equipes) ? count($equipes) : 0);
             if ($quant > 0) {
@@ -278,6 +272,7 @@ class OrcamentoController extends Controller
                     $equipe = Equipe::findOrFail($equipes[$equ]);
                     if (is_null($equipe) == false) {
                         $q = $request->quant_equ[$equ];
+                        $q = (is_null($q) ? 1 : $q);
                         $soma_custo = $equipe->custo * $q;
                         $soma_venda = $equipe->venda * $q;
                         $x->custo_equipe += $soma_custo;
@@ -289,7 +284,7 @@ class OrcamentoController extends Controller
             } else {
                 $orcamento->update(['custo_equipe' => 0, 'venda_equipe' => 0]);
             }
-            $orcamento->update(['medico' => $request->medico, 'preco_medico' => $request->preco_medico, 'tipo' => true]);
+            $orcamento->update(['preco_medico' => $request->preco_medico, 'tipo' => true]);
         } else {
             if ($orcamento->tipo == true) {
                 $orcamento->update(['medico' => null, 'preco_medico' => 0, 'tipo' => false, 'custo_equipe' => 0, 'venda_equipe' => 0]);
@@ -306,6 +301,7 @@ class OrcamentoController extends Controller
                 $material = Equipe::findOrFail($materiais[$mat]);
                 if (is_null($material) == false) {
                     $q = $request->quant_mat[$mat];
+                    $q = (is_null($q) ? 1 : $q);
                     $soma_custo = $material->custo * $q;
                     $soma_venda = $material->venda * $q;
                     $x->venda_material += $soma_venda;
@@ -330,6 +326,7 @@ class OrcamentoController extends Controller
                 $dieta = Dieta::findOrFail($dietas[$die]);
                 if (is_null($dieta) == false) {
                     $q = $request->quant_die[$die];
+                    $q = (is_null($q) ? 1 : $q);
                     $soma_custo = $dieta->custo * $q;
                     $soma_venda = $dieta->venda * $q;
                     $x->venda_dieta += $soma_venda;
@@ -353,6 +350,7 @@ class OrcamentoController extends Controller
                 $equipamento = Equipamento::findOrFail($equipamentos[$equipa]);
                 if (is_null($equipamento) == false) {
                     $q = $request->quant_equipa[$equipa];
+                    $q = (is_null($q) ? 1 : $q);
                     $soma_custo = $equipamento->custo * $q;
                     $soma_venda = $equipamento->venda * $q;
                     $x->venda_equipamento += $soma_venda;
@@ -376,6 +374,7 @@ class OrcamentoController extends Controller
                 $medicamento = Medicamento::findOrFail($medicamentos[$med]);
                 if (is_null($medicamento) == false) {
                     $q = $request->quant_med[$med];
+                    $q = (is_null($q) ? 1 : $q);
                     $soma_custo = $medicamento->custo * $q;
                     $soma_venda = $medicamento->venda * $q;
                     $x->venda_medicamento += $soma_venda;
@@ -423,6 +422,7 @@ class OrcamentoController extends Controller
             'email_pac' => $request->email_pac, 'telefone_1' => $request->telefone_1, 'telefone_2' => $request->telefone_2,
             'termos_condicoes' => $request->termos_condicoes, 'convenios' => $request->convenios,
             'condicoes_pag' => $request->condicoes_pag, 'data' => $request->data,
+            'status' => $request->status,'razao_status' => $request->razao_status,
         ]);
 
         return redirect()->route('orcamentos.dashboard')->with('msg', 'Orçamentos   editado com sucesso!');
@@ -447,21 +447,6 @@ class OrcamentoController extends Controller
     public function up_show(Request $request)
     {
         Orcamento::findOrFail($request->id)->update(['desconto' => $request->desconto]);
-
-        return;
-    }
-
-    public function status(Request $request)
-    {
-        Orcamento::findOrFail($request->id)->update(['status' => $request->status]);
-
-        return;
-    }
-
-    public function razao_status(Request $request)
-    {
-
-        Orcamento::findOrFail($request->id)->update(['razao_status' => $request->razao_status]);
 
         return;
     }

@@ -7,16 +7,24 @@
 <div class="container overflow-hidden col-md-10 offset-md-1" style="padding-top: 20px;">
     <div class="row gx-5">
         <div class="col">
-            <div class="p-3 border bg-light">Solicitados: {{$solicitados}}</div>
+            <div class="p-3 border bg-light">            
+                <button type="button" class="reset pesquisa" data-id="solicitado">Solicitados: {{$solicitados}}</button>
+            </div>
         </div>
         <div class="col">
-            <div class="p-3 border bg-light">Fechados: {{$fechados}}</div>
+            <div class="p-3 border bg-light">
+                <button type="button" class="reset pesquisa" data-id="fechado">Fechados: {{$fechados}}</button>
+            </div>
         </div>
         <div class="col">
-            <div class="p-3 border bg-light">Perdidos: {{$perdidos}}</div>
+            <div class="p-3 border bg-light">
+                <button type="button" class="reset pesquisa" data-id="perdido">Perdidos: {{$perdidos}}</button>
+            </div>  
         </div>
         <div class="col">
-            <div class="p-3 border bg-light">Abertos: {{$abertos}}</div>
+            <div class="p-3 border bg-light">
+                <button type="button" class="reset pesquisa" data-id="aberto">Abertos: {{$abertos}}</button>
+            </div>   
         </div>
     </div>
 </div>
@@ -95,8 +103,8 @@ $(function(){
         columns: [
             {data: 'formData', name: 'formData'},
             {data: 'formProcedimento', name: 'formProcedimento'},
-            {data: 'formStatus', name: 'formStatus'},
-            {data: 'formRazao', name: 'formRazao'},
+            {data: 'status', name: 'status'},
+            {data: 'razao_status', name: 'razao_status'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
         ],
         "language": {
@@ -114,68 +122,6 @@ $(function(){
                 "previous":   "Anterior"
             },
         }
-    });
-    $(document).on('change','#status', function(){
-        var url = $(this).data('id');
-        var status = $(this).val();
-        swal.fire({
-                title:'Alterar Status?',
-                html:'Tem certeza que quer <b>alterar</b> o status',
-                showCancelButton:true,
-                showCloseButton:true,
-                cancelButtonText:'Cancelar',
-                confirmButtonText:'Confirmar',
-                cancelButtonColor:'#d33',
-                confirmButtonColor:'#556ee6',
-                width:300,
-                allowOutsideClick:false
-        }).then(function(result){
-            if(result.value){
-                $.ajax({
-                    url, 
-                    data: {status: status},
-                    type: "PUT",
-                    success: function(){
-                        table.draw();
-                        toastr.success('Status alterado com sucesso!');
-                    },
-                    error: function(){
-                        toastr.error('Algo deu errado, ERRO!');
-                    }
-                });
-            }
-        });
-    });
-    $(document).on('change','#razao_status', function(){
-        var url = $(this).data('id');
-        var razao_status = $(this).val();
-        swal.fire({
-                title:'Alterar Razao?',
-                html:'Tem certeza que quer <b>alterar</b> a razão',
-                showCancelButton:true,
-                showCloseButton:true,
-                cancelButtonText:'Cancelar',
-                confirmButtonText:'Confirmar',
-                cancelButtonColor:'#d33',
-                confirmButtonColor:'#556ee6',
-                width:300,
-                allowOutsideClick:false
-        }).then(function(result){
-            if(result.value){
-                $.ajax({
-                    url, 
-                    data: {razao_status: razao_status},
-                    type: "PUT",
-                    success: function(){
-                        table.draw();
-                        toastr.success('Razão alterada com sucesso!');
-                    },
-                    error: function(){
-                        toastr.error('Algo deu errado, ERRO!');
-                    }
-                });
-            }
-        });
     });
     $(document).on('click','#destroy', function(){
         var url = $(this).data('id');
@@ -209,7 +155,12 @@ $(function(){
     
     $('#add').click( function(){
         $('#Form').trigger('reset');
-        $('#modal').modal('show')
+        $('#modal').modal('show');
+    });
+
+    $('.pesquisa').click( function(){
+        var v = $(this).data('id');
+        table.column(2).search(v).draw();
     });
     
     $(document).on('click', '#save', function(){

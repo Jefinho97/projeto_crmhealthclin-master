@@ -9,6 +9,21 @@
     <form action="{{ route('orcamentos.update', [$orcamento->id]) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
+        <select name="status" id="status" class="form-control">   
+            <option value="----">----</option>
+            <option value="solicitado" {{$orcamento->status === "solicitado" ? "selected" : ""}}>Solicitado</option>  
+            <option value="fechado" {{$orcamento->status === "fechado" ? "selected" : ""}}>Fechado</option> 
+            <option value="perdido" {{$orcamento->status === "perdido" ? "selected" : ""}}>Perdido</option> 
+            <option value="aberto" {{$orcamento->status === "aberto" ? "selected" : ""}}>Aberto</option> 
+        </select>
+
+        <select name="razao_status" id="razao_status" class="form-control"> 
+            <option value="----">----</option>
+            <option value="na fila" {{$orcamento->razao_status === "na fila" ? "selected" : ""}}>Na fila para atendimento</option>
+            <option value="aguardando cliente" {{$orcamento->razao_status === "aguardando cliente" ? "selected" : ""}}>Aguardando cliente</option>
+            <option value="aguardando envio" {{$orcamento->razao_status === "aguardando envio" ? "selected" : ""}}>Aguardando envio do cirurgião</option>
+        </select>
+
         <div class="form-group">
             <label for="title">Procedimento:</label>
             <input type="text" class="form-control" id="procedimento" name="procedimento" value="{{ $orcamento->procedimento }}">
@@ -25,7 +40,12 @@
 
         <div class="form-group" id="medprof" style="display: {{$orcamento->tipo == true? 'box' : 'none'}}">
                 <label for="title">Medico:</label>
-                <input type="text" class="form-control" id="medico" name="medico" placeholder="Nome do médico:" value="{{ $orcamento->medico }}">
+                <select name="medico" id="medico" class="form-control" >
+                    <option>----</option>
+                    @foreach($user->medicos as $medico)
+                    <option value="{{$medico->id}}">{{$medico->nome}}</option>
+                    @endforeach
+                </select>
                 <input type="number" step=".01" min="0" class="form-control" id="preco_medico" name="preco_medico" placeholder="Preço do médico" value="{{ $orcamento->preco_medico }}">
             <table class="table table-hover" id="data-table-equipe"> 
                 <thead>
@@ -190,7 +210,7 @@ $(document).ready( function () {
                 text: 'Adicionar Profissional',
                 action: function (){
                     table_equipe.row.add([
-                        '<select name="equipes[]" id="equipes" class="form-control" ><option>----</option>@foreach($user->equipes as $orcequ)<option value="{{ $orcequ->id }}">{{$orcequ->funcao}}</option>@endforeach</select>',
+                        '<select name="equipes[]" id="equipes" class="form-control" ><option value="">----</option>@foreach($user->equipes as $orcequ)<option value="{{ $orcequ->id }}">{{$orcequ->funcao}}</option>@endforeach</select>',
                         '<input type="number" class="form-control" name="quant_equ[]" id="quant_equ">',
                         '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delEquipe">Delete</button></div>'
                     ]).draw(false);
@@ -228,7 +248,7 @@ $(document).ready( function () {
                 text: 'Adicionar Medicamento',
                 action: function (){
                     table_medicamento.row.add([
-                        '<select name="medicamentos[]" id="medicamentos" class="form-control" ><option>----</option>@foreach($user->medicamentos as $orcmed)<option value="{{$orcmed->id}}">{{$orcmed->nome}}</option>@endforeach</select>',
+                        '<select name="medicamentos[]" id="medicamentos" class="form-control" ><option value="">----</option>@foreach($user->medicamentos as $orcmed)<option value="{{$orcmed->id}}">{{$orcmed->nome}}</option>@endforeach</select>',
                         '<input type="number" class="form-control" name="quant_med[]" id="quant_med">',
                         '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delMedicamento">Delete</button></div>'
                     ]).draw(false);
@@ -266,7 +286,7 @@ $(document).ready( function () {
                 text: 'Adicionar Equipamento',
                 action: function (){
                     table_equipamento.row.add([
-                        '<select name="equipamentos[]" id="equipamentos" class="form-control" ><option>----</option>@foreach($user->equipamentos as $orcequipa)<option value="{{$orcequipa->id}}">{{$orcequipa->nome}}</option>@endforeach</select>',
+                        '<select name="equipamentos[]" id="equipamentos" class="form-control" ><option value="">----</option>@foreach($user->equipamentos as $orcequipa)<option value="{{$orcequipa->id}}">{{$orcequipa->nome}}</option>@endforeach</select>',
                         '<input type="number" class="form-control" name="quant_equipa[]" id="quant_equipa">',
                         '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delEquipamento">Delete</button></div>'
                     ]).draw(false);
@@ -304,7 +324,7 @@ $(document).ready( function () {
                 text: 'Adicionar Dieta',
                 action: function (){
                     table_dieta.row.add([
-                        '<select name="dietas[]" id="dietas" class="form-control" ><option>----</option>@foreach($user->dietas as $orcdie)<option value="{{$orcdie->id}}">{{$orcdie->nome}}</option>@endforeach</select>',
+                        '<select name="dietas[]" id="dietas" class="form-control" ><option value="">----</option>@foreach($user->dietas as $orcdie)<option value="{{$orcdie->id}}">{{$orcdie->nome}}</option>@endforeach</select>',
                         '<input type="number" class="form-control" name="quant_die[]" id="quant_die">',
                         '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delDieta">Delete</button></div>'
                     ]).draw(false);
@@ -342,7 +362,7 @@ $(document).ready( function () {
                 text: 'Adicionar Material',
                 action: function (){
                     table_material.row.add([
-                        '<select name="materiais[]" id="materiais" class="form-control" ><option>----</option>@foreach($user->materiais as $orcmat)<option value="{{$orcmat->id}}">{{$orcmat->nome}}</option>@endforeach</select>',
+                        '<select name="materiais[]" id="materiais" class="form-control" ><option value="">----</option>@foreach($user->materiais as $orcmat)<option value="{{$orcmat->id}}">{{$orcmat->nome}}</option>@endforeach</select>',
                         '<input type="number" class="form-control" name="quant_mat[]" id="quant_mat">',
                         '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delMaterial">Delete</button></div>'
                     ]).draw();
@@ -380,7 +400,7 @@ $(document).ready( function () {
                 text: 'Adicionar Diaria',
                 action: function (){
                     table_diaria.row.add([
-                        '<select name="diarias[]" id="diarias" class="form-control" ><option>----</option>@foreach($user->diarias as $orcdia)<option value="{{$orcdia->id}}">{{$orcdia->nome}}</option>@endforeach</select>',
+                        '<select name="diarias[]" id="diarias" class="form-control" ><option value="">----</option>@foreach($user->diarias as $orcdia)<option value="{{$orcdia->id}}">{{$orcdia->nome}}</option>@endforeach</select>',
                         '<div style="text-align: center;"><button class="btn btn-sm btn-danger" id="delDiaria">Delete</button></div>'
                     ]).draw(false);
                 },

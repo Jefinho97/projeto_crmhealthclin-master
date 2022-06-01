@@ -272,7 +272,6 @@ class OrcamentoController extends Controller
                     $equipe = Equipe::findOrFail($equipes[$equ]);
                     if (is_null($equipe) == false) {
                         $q = $request->quant_equ[$equ];
-                        $q = (is_null($q) ? 1 : $q);
                         $soma_custo = $equipe->custo * $q;
                         $soma_venda = $equipe->venda * $q;
                         $x->custo_equipe += $soma_custo;
@@ -301,7 +300,6 @@ class OrcamentoController extends Controller
                 $material = Equipe::findOrFail($materiais[$mat]);
                 if (is_null($material) == false) {
                     $q = $request->quant_mat[$mat];
-                    $q = (is_null($q) ? 1 : $q);
                     $soma_custo = $material->custo * $q;
                     $soma_venda = $material->venda * $q;
                     $x->venda_material += $soma_venda;
@@ -326,7 +324,6 @@ class OrcamentoController extends Controller
                 $dieta = Dieta::findOrFail($dietas[$die]);
                 if (is_null($dieta) == false) {
                     $q = $request->quant_die[$die];
-                    $q = (is_null($q) ? 1 : $q);
                     $soma_custo = $dieta->custo * $q;
                     $soma_venda = $dieta->venda * $q;
                     $x->venda_dieta += $soma_venda;
@@ -350,7 +347,6 @@ class OrcamentoController extends Controller
                 $equipamento = Equipamento::findOrFail($equipamentos[$equipa]);
                 if (is_null($equipamento) == false) {
                     $q = $request->quant_equipa[$equipa];
-                    $q = (is_null($q) ? 1 : $q);
                     $soma_custo = $equipamento->custo * $q;
                     $soma_venda = $equipamento->venda * $q;
                     $x->venda_equipamento += $soma_venda;
@@ -374,7 +370,6 @@ class OrcamentoController extends Controller
                 $medicamento = Medicamento::findOrFail($medicamentos[$med]);
                 if (is_null($medicamento) == false) {
                     $q = $request->quant_med[$med];
-                    $q = (is_null($q) || $q == 0 ? 1 : $q);
                     $soma_custo = $medicamento->custo * $q;
                     $soma_venda = $medicamento->venda * $q;
                     $x->venda_medicamento += $soma_venda;

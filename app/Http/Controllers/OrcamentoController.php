@@ -374,7 +374,7 @@ class OrcamentoController extends Controller
                 $medicamento = Medicamento::findOrFail($medicamentos[$med]);
                 if (is_null($medicamento) == false) {
                     $q = $request->quant_med[$med];
-                    $q = (is_null($q) ? 1 : $q);
+                    $q = (is_null($q) || $q == 0 ? 1 : $q);
                     $soma_custo = $medicamento->custo * $q;
                     $soma_venda = $medicamento->venda * $q;
                     $x->venda_medicamento += $soma_venda;

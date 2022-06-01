@@ -419,7 +419,7 @@ $(document).ready( function () {
     tables();
     function tables(){
         var string_orcequ = "<?php echo $string_orcequ;?>";
-        if(string_orcequ != null){
+        if(string_orcequ){
             var orcequ = string_orcequ.split('|');
             for(let i=0; i < orcequ.length; i++){
                 var a = orcequ[i].split('!');
@@ -438,7 +438,7 @@ $(document).ready( function () {
         }
 
         var string_orcmed = "<?php echo $string_orcmed;?>";
-        if(string_orcmed != null){
+        if(string_orcmed){
             var orcmed = string_orcmed.split('|');
             for(let i=0; i < orcmed.length; i++){
                 var a = orcmed[i].split('!');
@@ -457,7 +457,7 @@ $(document).ready( function () {
         }
 
         var string_orcequipa = "<?php echo $string_orcequipa;?>";
-        if(string_orcequipa != null){
+        if(string_orcequipa){
             var orcequipa = string_orcequipa.split('|');
             for(let i=0; i < orcequipa.length; i++){
                 var a = orcequipa[i].split('!');
@@ -476,7 +476,7 @@ $(document).ready( function () {
         }       
 
         var string_orcdie = "<?php echo $string_orcdie;?>";
-        if(string_orcdie != null){
+        if(string_orcdie){
             var orcdie = string_orcdie.split('|');
             for(let i=0; i < orcdie.length; i++){
                 var a = orcdie[i].split('!');
@@ -495,7 +495,7 @@ $(document).ready( function () {
         }
         
         var string_orcmat = "<?php echo $string_orcmat;?>";
-        if(string_orcmat != null){
+        if(string_orcmat){
             var orcmat = string_orcmat.split('|');
             for(let i=0; i < orcmat.length; i++){
                 var a = orcmat[i].split('!');
@@ -514,7 +514,7 @@ $(document).ready( function () {
         }
 
         var string_orcdia = "<?php echo $string_orcdia;?>";
-        if(string_orcdia != null){
+        if(string_orcdia){
             var orcdia = string_orcdia.split('|');
             for(let i=0; i < orcdia.length; i++){
                 var html = '<select name="diarias[]" id="diarias" class="form-control" ><option>----</option>';

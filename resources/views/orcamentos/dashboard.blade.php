@@ -3,6 +3,18 @@
 @section('title', 'Dashboard')
 
 @section('content')
+<div class="row input-daterange">
+    <div class="col-md-4">
+        <input type="text" name="min" id="min" class="form-control" placeholder="Data inicial!" readonly />
+    </div>
+    <div class="col-md-4">
+        <input type="text" name="max" id="max" class="form-control" placeholder="Data final!" readonly />
+    </div>
+    <div class="col-md-4">
+        <button type="button" name="filter" id="filter" class="btn btn-primary">Filtrar</button>
+        <button type="button" name="refresh" id="refresh" class="btn btn-default">Recaregar</button>
+    </div>
+</div>
 
 <div class="container overflow-hidden col-md-10 offset-md-1" style="padding-top: 20px;">
     <div class="row gx-5">
@@ -86,43 +98,78 @@
         </div>
     </div>
 </div>
-
 <script>
 toastr.options.preventDuplicates = true;
-
-$(function(){
-        $.ajaxSetup({
+$(document).ready( function(){
+    $.ajaxSetup({
         headers:{
             'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
         }
-    });  
-    var table = $('.data-table').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: "{{ route('orcamentos.dashboard') }}",
-        columns: [
-            {data: 'formData', name: 'formData'},
-            {data: 'formProcedimento', name: 'formProcedimento'},
-            {data: 'status', name: 'status'},
-            {data: 'razao_status', name: 'razao_status'},
-            {data: 'action', name: 'action', orderable: false, searchable: false},
-        ],
-        "language": {
-            "search": "Buscar:",
-            "lengthMenu": "Mostrar _MENU_ Registros",
-            "zeroRecords": "Nenhum registro encontrado",
-            "emptyTable": "Nenhum Registro",
-            "info": "Mostrando pagina _PAGE_ de _PAGES_",
-            "infoEmpty": "",
-            "processing": "Processando...",
-            "paginate": {
-                "first":      "Primeiro",
-                "last":       "Ultimo",
-                "next":       "Proximo",
-                "previous":   "Anterior"
+    });
+    $('.input-daterange').datepicker({
+        todayBtn:'linked',
+        format:'yyyy-mm-dd',
+        autoclose:true
+    });
+
+    load_data();
+
+    function load_data(min = '', max = ''){
+        
+        $('.data-table').DataTable({
+            dom: 'lfrtip',
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url:"{{ route('orcamentos.dashboard') }}",
+                data:{min:min, max:max}
             },
+            columns: [
+                {data: 'formData', name: 'formData'},
+                {data: 'formProcedimento', name: 'formProcedimento'},
+                {data: 'status', name: 'status'},
+                {data: 'razao_status', name: 'razao_status'},
+                {data: 'action', name: 'action', orderable: false, searchable: false},
+            ],
+            "language": {
+                "search": "Buscar:",
+                "lengthMenu": "Mostrar _MENU_ Registros",
+                "zeroRecords": "Nenhum registro encontrado",
+                "emptyTable": "Nenhum Registro",
+                "info": "Mostrando pagina _PAGE_ de _PAGES_",
+                "infoEmpty": "",
+                "processing": "Processando...",
+                "paginate": {
+                    "first":      "Primeiro",
+                    "last":       "Ultimo",
+                    "next":       "Proximo",
+                    "previous":   "Anterior"
+                },
+            },
+        });
+    }
+
+    $('#filter').click(function(){
+        var min = $('#min').val();
+        var max = $('#max').val();
+        if(min != '' &&  max != '')
+        {
+            $('.data-table').DataTable().destroy();
+            load_data(min, max);
+        }
+        else
+        {
+            toastr.error('As duas datas são necessarias!');
         }
     });
+
+    $('#refresh').click(function(){
+        $('#min').val('');
+        $('#max').val('');
+        $('.data-table').DataTable().destroy();
+        load_data();
+    });
+
     $(document).on('click','#destroy', function(){
         var url = $(this).data('id');
         swal.fire({
@@ -142,7 +189,7 @@ $(function(){
                     url, 
                     type: "DELETE",
                     success: function(){
-                        table.draw();
+                        $('.data-table').DataTable().draw();
                         toastr.success('Orçamento foi deletado com sucesso!');
                     },
                     error: function(){
@@ -160,7 +207,7 @@ $(function(){
 
     $('.pesquisa').click( function(){
         var v = $(this).data('id');
-        table.column(2).search(v).draw();
+        $('.data-table').DataTable().column(2).search(v).draw();
     });
     
     $(document).on('click', '#save', function(){
@@ -202,7 +249,7 @@ $(function(){
                 url: "{{route('orcamentos.store')}}",
                 type:"POST",
                 success: function(){
-                    table.draw();
+                    $('.data-table').DataTable().draw();
                     toastr.success('Orçamento criado com sucesso!');
                     $('#modal').modal('hide');
                 },

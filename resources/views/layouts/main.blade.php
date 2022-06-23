@@ -7,7 +7,7 @@
         <title>@yield('title')</title>
 
         <!-- CSS Bootstrap -->
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.11.4/b-2.2.2/datatables.min.css"/>
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.12.1/b-2.2.3/date-1.1.2/sb-1.3.3/datatables.min.css"/>
         
         <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">
         
@@ -20,13 +20,15 @@
         <link rel="stylesheet" href="/css/styles.css">
         
         <script src="{{ asset('jquery/jquery-3.6.0.min.js') }}"></script>
-        
-        <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.11.4/b-2.2.2/datatables.min.js"></script>
+        <script src="{{ asset('moment/moment.min.js') }}"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.12.1/b-2.2.3/date-1.1.2/sb-1.3.3/datatables.min.js"></script>
         <script src="{{ asset('bootstrap/js/bootstrap.min.js') }}"></script>
         <script src="{{ asset('bootstrap/js/bootstrap.bundle.min.js') }}"></script>
         <script src="{{ asset('sweetalert2/sweetalert2.min.js') }}"></script>
         <script src="{{ asset('toastr/toastr.min.js') }}"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css"/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.js"></script>
     </head>
     <body>
     <header>

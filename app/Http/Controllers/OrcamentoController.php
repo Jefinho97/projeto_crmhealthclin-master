@@ -20,6 +20,7 @@ use mysqli;
 use PhpParser\Node\Stmt\Return_;
 use Barryvdh\DomPDF\Facade as PDF;
 use Yajra\DataTables\Facades\DataTables as DataTables;
+use DateTime;
 
 class OrcamentoController extends Controller
 {
@@ -63,11 +64,15 @@ class OrcamentoController extends Controller
                 
         };
         if ($request->ajax()) {
+            if(!empty($request->min)){
+                $orcamentos = $orcamentos->whereBetween('created_at', [$request->min, $request->max]);
+            } else {
+                $orcamentos = $orcamentos;
+            }
             return Datatables::of($orcamentos)
                 ->addIndexColumn()
                 ->addColumn('formData', function ($row) {
-                    $btn = date('d/m/y', strtotime($row->created_at));
-
+                    $btn = date('Y-m-d', strtotime($row->created_at));
                     return $btn;
                 })
                 ->addColumn('formProcedimento', function ($row) {

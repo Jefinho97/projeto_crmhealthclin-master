@@ -21,6 +21,9 @@
         "tailwindcss": "^2.2.2"
     },
     "dependencies": {
+        "full-icu": "^1.4.0",
+        "luxon": "^2.4.0",
+        "moment": "^2.29.3",
         "toastr": "^2.1.4"
     }
 }

@@ -11,6 +11,7 @@ use App\Models\Equipamento;
 use App\Models\Equipe;
 use App\Models\Material;
 use App\Models\Medicamento;
+use App\Models\Medico;
 use App\Models\User;
 
 use BaconQrCode\Renderer\Color\Rgb;
@@ -64,7 +65,7 @@ class OrcamentoController extends Controller
                 
         };
         if ($request->ajax()) {
-            if(!empty($request->min)){
+            if(!empty($request->min) ){
                 $orcamentos = $orcamentos->whereBetween('created_at', [$request->min, $request->max]);
             } else {
                 $orcamentos = $orcamentos;
@@ -87,11 +88,14 @@ class OrcamentoController extends Controller
 
                     return $btn;
                 })
-                ->rawColumns(['action', 'formData', 'formProcedimento'])
+                ->addColumn('medico', function ($row){
+                    return $row->medico_id;
+                })
+                ->rawColumns(['action', 'formData', 'formProcedimento', 'medico'])
                 ->make(true);
         }
 
-        return view('orcamentos.dashboard', [compact('orcamentos'), 'solicitados' => $solicitados, 'fechados' => $fechados, 'perdidos' => $perdidos, 'abertos' => $abertos]);
+        return view('orcamentos.dashboard', [compact('orcamentos'), 'solicitados' => $solicitados, 'fechados' => $fechados, 'perdidos' => $perdidos, 'abertos' => $abertos, 'user' => $user]);
     }
 
     // Criar Orçamento
@@ -265,11 +269,10 @@ class OrcamentoController extends Controller
     {
         $orcamento = Orcamento::findOrFail($request->id);
         $x = new Orcamento;
+
         // update tipo, medico, equipe
         if ($request->tipo == true) {
             $orcamento->equipes()->detach();
-            $orcamento->medicos()->detach();
-            $orcamento->medicos()->attach($request->medico->id);
             $equipes = $request->equipes;
             $quant = (is_array($equipes) ? count($equipes) : 0);
             if ($quant > 0) {
@@ -288,10 +291,10 @@ class OrcamentoController extends Controller
             } else {
                 $orcamento->update(['custo_equipe' => 0, 'venda_equipe' => 0]);
             }
-            $orcamento->update(['preco_medico' => $request->preco_medico, 'tipo' => true]);
+            $orcamento->update(['tipo' => true]);
         } else {
             if ($orcamento->tipo == true) {
-                $orcamento->update(['medico' => null, 'preco_medico' => 0, 'tipo' => false, 'custo_equipe' => 0, 'venda_equipe' => 0]);
+                $orcamento->update(['tipo' => false, 'custo_equipe' => 0, 'venda_equipe' => 0]);
             }
         }
 
@@ -422,7 +425,7 @@ class OrcamentoController extends Controller
             'email_pac' => $request->email_pac, 'telefone_1' => $request->telefone_1, 'telefone_2' => $request->telefone_2,
             'termos_condicoes' => $request->termos_condicoes, 'convenios' => $request->convenios,
             'condicoes_pag' => $request->condicoes_pag, 'data' => $request->data,
-            'status' => $request->status,'razao_status' => $request->razao_status,
+            'status' => $request->status,'razao_status' => $request->razao_status, 'medico_id' => $request->medico, 'preco_medico' => $request->preco_medico
         ]);
 
         return redirect()->route('orcamentos.dashboard')->with('msg', 'Orçamentos   editado com sucesso!');

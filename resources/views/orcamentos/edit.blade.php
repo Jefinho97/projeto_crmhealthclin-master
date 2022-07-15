@@ -34,19 +34,22 @@
             <input type="text" class="form-control" id="solicitante" name="solicitante" value="{{ $orcamento->solicitante }}">
         </div>
 
+        <div class="form-group">
+            <label for="title">Medico:</label>
+            <select name="medico" id="medico" class="form-control" >
+                <option value="">----</option>
+                @foreach($user->medicos as $medico)
+                <option value="{{$medico->id}}">{{$medico->nome}}</option>
+                @endforeach
+            </select>
+            <input type="number" step=".01" min="0" class="form-control" id="preco_medico" name="preco_medico" placeholder="Preço do médico" value="{{ $orcamento->preco_medico }}">
+        </div>
+
         <div class="form-group" >
             Orçamento com equipe médica:<input type="checkbox" name="tipo" id="show" {{$orcamento->tipo == true? 'checked' : ''}}>
         </div>
 
         <div class="form-group" id="medprof" style="display: {{$orcamento->tipo == true? 'box' : 'none'}}">
-                <label for="title">Medico:</label>
-                <select name="medico" id="medico" class="form-control" >
-                    <option>----</option>
-                    @foreach($user->medicos as $medico)
-                    <option value="{{$medico->id}}">{{$medico->nome}}</option>
-                    @endforeach
-                </select>
-                <input type="number" step=".01" min="0" class="form-control" id="preco_medico" name="preco_medico" placeholder="Preço do médico" value="{{ $orcamento->preco_medico }}">
             <table class="table table-hover" id="data-table-equipe"> 
                 <thead>
                     <tr>

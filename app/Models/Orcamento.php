@@ -50,7 +50,8 @@ class Orcamento extends Model
         ->withPivot('quant', 'soma_custo', 'soma_venda');
     }
 
-    public function medicos() {
-        return $this->belongsToMany('App\Models\Medico');
+    public function medico() {
+        return $this->belongsTo('App\Models\Medico')
+        ->withPivot('preco_medico');
     }
 }

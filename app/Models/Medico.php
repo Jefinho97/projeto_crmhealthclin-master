@@ -14,8 +14,8 @@ class Medico extends Model
     public function user() {
         return $this->belongsTo('App\Models\User');
     }
-    
     public function orcamentos() {
-        return $this->belongsToMany('App\Models\Orcamento');
+        return $this->hasMany('App\Models\Orcamento')
+            ->withPivot('preco_medico');
     }
 }

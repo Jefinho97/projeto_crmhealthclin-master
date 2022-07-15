@@ -3,18 +3,7 @@
 @section('title', 'Dashboard')
 
 @section('content')
-<div class="row input-daterange">
-    <div class="col-md-4">
-        <input type="text" name="min" id="min" class="form-control" placeholder="Data inicial!" readonly />
-    </div>
-    <div class="col-md-4">
-        <input type="text" name="max" id="max" class="form-control" placeholder="Data final!" readonly />
-    </div>
-    <div class="col-md-4">
-        <button type="button" name="filter" id="filter" class="btn btn-primary">Filtrar</button>
-        <button type="button" name="refresh" id="refresh" class="btn btn-default">Recaregar</button>
-    </div>
-</div>
+
 
 <div class="container overflow-hidden col-md-10 offset-md-1" style="padding-top: 20px;">
     <div class="row gx-5">
@@ -41,9 +30,32 @@
     </div>
 </div>
 
+<div class="col-md-10 offset-md-1 dashboard-title-container ">
+    <label for="title" class="form-control">Pesquisar por Medico:</label>
+    <select name="medico" id="medico" class="form-control medsearch" >
+        <option value="">----</option>
+        @foreach($user->medicos as $medico)
+        <option value="{{$medico->id}}">{{$medico->nome}}</option>
+        @endforeach
+    </select>
+</div>
+
 <div class="col-md-10 offset-md-1 dashboard-title-container">
-<h1>Orçamentos Cadastrados</h1>
-<button type="button" class="btn btn-success" id="add" style="float:right"> criar orçamento</button>
+    <h1>Orçamentos Cadastrados</h1>
+    <button type="button" class="btn btn-success" id="add" style="float:right"> criar orçamento</button>
+
+    <div class="row input-daterange">
+        <div class="col-md-4">
+            <input type="text" name="min" id="min" class="form-control" placeholder="Data inicial!" readonly />
+        </div>
+        <div class="col-md-4">
+            <input type="text" name="max" id="max" class="form-control" placeholder="Data final!" readonly />
+        </div>
+        <div class="col-md-4">
+            <button type="button" name="filter" id="filter" class="btn btn-primary">Filtrar</button>
+            <button type="button" name="refresh" id="refresh" class="btn btn-secondary">Recaregar</button>
+        </div>
+    </div>
 </div>
 <div class="col-md-10 offset-md-1 dashboard-events-container">
     <table class="table table-hover data-table">   
@@ -130,6 +142,7 @@ $(document).ready( function(){
                 {data: 'status', name: 'status'},
                 {data: 'razao_status', name: 'razao_status'},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
+                {data: 'medico', name: 'medico', visible: false},
             ],
             "language": {
                 "search": "Buscar:",
@@ -189,8 +202,8 @@ $(document).ready( function(){
                     url, 
                     type: "DELETE",
                     success: function(){
+                        toastr.success('Orçamento foi deletado com sucesso!'); 
                         $('.data-table').DataTable().draw();
-                        toastr.success('Orçamento foi deletado com sucesso!');
                     },
                     error: function(){
                         toastr.error('Algo deu errado, ERRO!');
@@ -210,6 +223,11 @@ $(document).ready( function(){
         $('.data-table').DataTable().column(2).search(v).draw();
     });
     
+    $(document).on('change', '.medsearch', function(){
+        var v = $(this).val();
+        $('.data-table').DataTable().column(5).search(v).draw();
+    });
+
     $(document).on('click', '#save', function(){
         var procedimento = form.procedimento;
         var paciente = form.paciente;

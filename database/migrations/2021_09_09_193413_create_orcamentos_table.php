@@ -28,9 +28,8 @@ class CreateOrcamentosTable extends Migration
             $table->text('condicoes_pag')->nullable();
             $table->text('solicitante')->nullable();
             $table->dateTime('data')->nullable();
-            $table->string('medico')->nullable();
             
-            $table->double('preco_medico', 20, 2)->nullable();
+            
             $table->double('custo_equipe', 20, 2)->nullable();
             $table->double('venda_equipe', 20, 2)->nullable();
             
@@ -53,6 +52,8 @@ class CreateOrcamentosTable extends Migration
             $table->double('valor_inicial', 20, 2)->nullable();
             $table->double('valor_final', 20, 2)->nullable();
             $table->foreignId('user_id')->constrained();
+            $table->foreignId('medico_id')->nullable();
+            $table->double('preco_medico', 20, 2)->nullable();
             $table->timestamps();
         });
     }

@@ -58,6 +58,9 @@
                 <a href="{{ route('medicamentos.dashboard') }}" class="nav-link">Medicamentos</a>
               </li>
               <li class="nav-item">
+                <a href="{{ route('medicos.dashboard')}}" class="nav-link">Medicos</a>
+              </li>
+              <li class="nav-item">
                 <form action="/logout" method="POST">
                   @csrf
                   <a href="/logout" class="nav-link" 
